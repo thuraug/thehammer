@@ -1,0 +1,85 @@
+- hosts: "{{ hosts }}"
+  name: Configure Remote Hosts
+  gather_facts: yes
+
+  vars:
+    pathToStorage: "{{ pathToStorage }}"
+    pathToResults: "{{ pathToResults }}"
+    storageSystem: "{{ storageSystem }}"
+    loadType: "{{ loadType }}"
+    pathToScripts: "{{ pathToScripts }}"
+    
+  tasks:
+      
+    - name: Create needed files in /tmp/
+      shell: touch /tmp/temp.txt /tmp/holder.txt
+      when: storageSystem == "vast"
+
+    - name: Create the vast path
+      shell: ls / | grep vast1 > /tmp/temp.txt && sed -n 1p /tmp/temp.txt > /tmp/holder.txt; printf "/" && printf `cat /tmp/holder.txt` && printf "/" 
+      register: vastPath 
+      when: storageSystem == "vast"
+    
+    - name: Create the path to loadType
+      shell: echo "{{ vastPath.stdout }}{{ loadType }}""/"
+      register: vastPathToStorage
+      when: storageSystem == "vast"
+
+    - name: Check if vast is mounted
+      stat:
+        path: "{{ vastPathToStorage.stdout }}"
+      register: vastIsMounted
+      when: storageSystem == "vast"
+
+    - name: Check if non-vast storage is mounted
+      stat:
+        path: "{{ pathToStorage }}"
+      register: storageIsMounted
+      when: storageSystem == "gpfs"
+
+    - name: Generate Hostname Folder
+      shell: echo `hostname`
+      register: hostname
+
+    - name: check if hostname folder is made
+      stat:
+        path: "{{ vastPathToStorage.stdout }}{{ hostname.stdout }}"
+      register: hostnameExists
+      when: storageSystem == "vast"
+        
+    - name: check if hostname folder is made
+      stat:
+        path: "{{ pathToStorage }}{{ hostname.stdout }}"
+      register: hostnameExists
+      when: storageSystem == "gpfs"
+
+    - name: Create Hostname folder on vast storage
+      shell: mkdir "{{ vastPathToStorage.stdout }}{{ hostname.stdout }}" 
+      when: storageSystem == "vast" and vastIsMounted.stst.exists and hostnameExists.stat.exists == false
+
+    - name: Create hostname folder on storage
+      shell: mkdir "{{ pathToStorage }}{{hostname.stdout }}"
+      when: storageSystem == "gpfs" and storageIsMounted.stat.exists and hostnameExists.stat.exists == false
+    
+    - name: Check for /DIST/LOAD_TEST_RESULTS
+      stat:
+        path: "{{ pathToResults }}"
+      register: resultsPath
+
+    - name: Create /DIST/LOAD_TEST_RESULTS if it doesn't exist
+      shell: mkdir "{{ pathToResults }}"
+      when: resultsPath.stat.exists == false
+
+    - name: Send Scripts Folder
+      copy: 
+        src: /ansible/loadtest/scripts
+        dest: /etc/ansible/
+
+    - name: install fio
+      yum:
+        name: fio
+        state: present
+    
+
+
+

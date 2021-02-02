@@ -1,0 +1,81 @@
+- hosts: "{{ hosts }}"
+  name: Re-run the frametest to check for consistency
+  gather_facts: yes
+  serial: 1
+  strategy: linear
+
+  
+  vars:
+    pathToScripts: "{{ pathToScript }}"
+    pathToStorage: "{{ pathToStorage }}"
+    testType: "{{ testType }}"
+    pathToResults: "{{ pathToResults }}"
+    testNum: "{{ testNum }}"
+    slashVar: "/"
+    systemStorage: "{{ systemStorage }}"
+
+  tasks:
+   
+    - name: Full Path
+      shell: echo "{{ pathToResults }}{{ testNum }}"
+      register: fullPathToResults
+    
+    - name: check test number directory
+      stat:
+        path: "{{pathToResults}}{{ testNum }}"
+      register: testNumExists
+
+    - name: mkdir
+      shell: mkdir "{{ fullPathToResults.stdout }}"
+
+    - name: Get Localhost IP
+      shell: ip=`hostname -I`; octet=${ip:0:13}; echo "${octet}:"
+      register: localhost
+      delegate_to: localhost
+    
+    - name: get full vastpath 
+      shell: ls / | grep vast1 > /tmp/temp.txt && sed -n 1p /tmp/temp.txt > /tmp/holder.txt; printf "/" && printf `cat /tmp/holder.txt` && printf "/frametest/" && printf `hostname` && printf "/"
+      register: fullPath
+      when:  systemStorage == "vast"
+
+    - name: get full gpfs path
+      shell: echo "{{ pathToStorage }}"
+      register: fullPath
+      when: systemStorage == "gpfs"
+    
+    - debug:
+        var: systemStorage  
+
+    - name: IP Variable
+      shell: echo `ip route get 1.2.3.4 | awk '{print $7}'`
+      register: ipAddress
+
+    - name: send optimal frametest
+      copy:
+        src: /ansible/loadtest/scripts/
+        dest: /etc/ansible/scripts    
+
+    - name: ensure everything is the proper permissions
+      shell: chmod 755 /etc/ansible/scripts/*
+    
+    - name: Path to Script
+      shell: echo "/etc/ansible/scripts/"`ls /etc/ansible/scripts/ | grep "frametest_""{{ipAddress.stdout }}""_optimal.sh"`
+      register: pathToFrametest
+      when: testType == "frametest"
+
+    - name: Path to Script
+      shell: echo "/etc/ansible/scripts/"`ls /etc/ansible/scripts/ | grep "fio_""{{ ipAddress.stdout }}""_optimal.sh"`
+      register: pathToFio
+      when: testType == "fio"
+    
+    - name: Execute Frametest.sh
+      shell: "{{ pathToFrametest.stdout }} {{ fullPath.stdout }} {{ fullPathToResults.stdout }} {{ pathToScripts }}"
+      when: testType == "frametest"
+
+    - name: Execute fio
+      shell: "{{ pathToFio.stdout }} {{ fullPath.stdout }} {{ fullPathToResults.stdout }}/ {{ pathToScripts }}"
+      when: testType == "fio"
+    
+    - name: Fetch Results Files
+      shell: rsync -av "{{ fullPathToResults.stdout }}"  "{{ localhost.stdout }}{{ pathToResults }}Client_1/{{ipAddress.stdout}}"
+    

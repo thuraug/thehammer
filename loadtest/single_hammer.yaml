@@ -1,0 +1,58 @@
+- hosts: "{{ hosts }}"
+  name: LOAD TEST
+  gather_facts: yes
+  serial: 1
+  strategy: linear
+
+  vars:
+    pathToScripts: "{{ pathToScript }}"
+    pathToStorage: "{{ pathToStorage }}"
+    testType: "{{ testType }}"
+    pathToResult:  "{{ pathToResults }}"
+    slashVar: "/"
+    systemStorage: "{{ systemStorage }}"
+
+  tasks:
+
+    - name: Get Localhost IP
+      shell: ip=`hostname -I`; octet=${ip:0:13}; echo "${octet}:"
+      register: localhost
+      delegate_to: localhost
+
+    - name: Get Hostname
+      shell: echo `hostname`
+      register: hostname
+
+    
+    - name: get full vastpath 
+      shell: ls / | grep vast1 > /tmp/temp.txt && sed -n 1p /tmp/temp.txt > /tmp/holder.txt; printf "/" && printf `cat /tmp/holder.txt` && printf "/frametest/" && printf `hostname` && printf "/"
+      register: fullPath
+      when: systemStorage == "vast"
+
+    - name: get full gpfs path
+      shell: echo "{{ pathToStorage }}{{ hostname.stdout }}/"
+      register: fullPath
+      when: systemStorage == "gpfs"
+
+    - debug:
+        var: fullPath
+
+    - name: ensure everything is the proper permissions
+      shell: chmod 755 /etc/ansible/scripts/*
+    
+    - name: IP Variable
+      shell: ip route get 1.2.3.4 | awk '{print $7}'
+      register: ipAddress
+
+    - name: Execute Frametest.sh
+      shell: /etc/ansible/scripts/frametest.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}"
+      when: testType == "frametest"
+
+    - name: Execute fio
+      shell: /etc/ansible/scripts/fio.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}"
+      when: testType == "fio"
+    
+    - name: Fetch Results Files
+      shell: rsync -av "{{ pathToResults }} {{ localhost.stdout }}{{ pathToResults }}Client_1/{{ipAddress.stdout}}"
+    
+       
