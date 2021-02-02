@@ -1,8 +1,9 @@
 #!/bin/bash
+# Written by Gabe Thurau, gabe.thurau@allianceitc.com
+# This script is meant to run a full loadtest on all systems in a cluster, coalate the results, find the optimal testing parameters then fully test the entire cluster by running multiple hosts at the same time
 
-# I WANT TO DIE 
-
-### variables ###
+ 
+### Variables ###
 whoami=`whoami`
 storageSystem=
 tier=
@@ -12,69 +13,16 @@ pathToStorage=''
 pathToScripts="/ansible/loadtest/scripts/"
 pathToAnsible="/ansible/loadtest/"
 
-usage ()
-{
-	echo
-	echo "This script is used to test a list of systems as specified in /etc/ansible/loadtest/Clients_Config"
-	echo "There is a choice to use either fio or frametest on either GPFS or Vast storage"
-	echo " Usage: echo `basename $0` [-h|-help]"
-		echo " -h | show the help menu"
-		echo " -G | GPFS Storage"
-		echo " -V | Vast Storage"
-		echo "-Nv | NVME Tier -- this flag must be used with the '-G' flag"
-		echo "-Nl | NLSAS Tier -- this flag must be used with the '-G' flag" 
-		echo " -S | SAS Tier -- this flag must be used with the '-G' flag" 
-		echo "-Fr | frametest load testing"
-		echo "-Fi | fio load testing"
-}
+### Flat File Config ###
+# Create a flat config file checker to ensure that the script is running as it should
 
-### Check Flags ###
-#if [ $# -gt 0 ]
-#then
-#	{
-#		case "{$1}" in
-#			-[h] )
-#				usage
-#				;;
-#			-[G] )
-#				storageSystem="gpfs"
-#				;;
-#			-[V] )
-#				storageSystem="vast"
-#				;;
-#			* )
-#				usage
-#				;;
-#		esac
-#		case "{$2}" in
-#			-[Nv] )
-#				tier="NVME"
-#				;;
-#			-[Nl] )
-#				tier="NLSAS"
-#				;;
-#
-#			-[S] )
-#				tier="SAS"
-#				;;
-#			* )
-#				usage
-#				;;
-#		esac
-#		case "{$3}" in
-#			-[Fr] )
-#				loadType="frametest"
-#				;;
-#			-[Fi] )
-#				loadType="fio"
-#				;;
-#			* )
-#				usage
-#				;;
-#		esac
-#	}
-#fi
 
+
+
+
+
+### Ask Questions of User ###
+# *Not a permanent solution -- only used for testing
 Ask_Questions ()
 {
 	read -p "What type of storage?" storageSystem
@@ -87,12 +35,8 @@ Ask_Questions ()
 	echo "Storage System: " $storageSystem
 }
 
-
-# Step 0: Check requirements
-	### MAKE THESE FLAGS ###
-	# what type of storage --> for GPFS also ask for tiers
-	# what type of test
-
+### Configure Path to Storage ###
+# Checks the current user inputted questions and sets the variable pathToStorage
 Configure_Path_To_Storage ()
 {
 	if [[ $storageSystem == "gpfs" ]]
@@ -101,11 +45,12 @@ Configure_Path_To_Storage ()
 	else
 		pathToStorage="/vast"
 	fi
-	
 }
 
-# Step 1: Configure the Host List in /etc/ansible hosts
-
+### Configure Hosts from Sorting Algorithm ###
+# Organizes the clients currently in the file Clients_Config based on the script host_sorting.sh
+# *THIS IS A VERY IMPORTANT PART --> DO NOT CHANGE THE host_sorting.sh SCRIPT FOR ANY REASON (the sorting algorithm inside works to sort the hosts into all possible combinations for a base R value)
+# ** There must be an /etc/ansible/hosts file on whatever system is actually running this script --> ansible must be installed as well
 Configure_Hosts ()
 {
 	if [ `wc -l < ${pathToAnsible}Clients_Config` == 0 ]
@@ -121,11 +66,11 @@ Configure_Hosts ()
 	echo "####################"
 }
 
-# Step 2: Configure LocalHost directories
-	#/DIST/LOAD_TEST_RESULTS/Client_2/Client_2_set1
-
+### Create Results Directories ###
+# Creates all the necessary directories to store all the results from the actual load testing
 Create_Results_Directories ()
 {
+	[ ! -d /DIST ] && mkdir /DIST
 	[ ! -d ${pathToResults} ] && mkdir ${pathToResults}
 	
 	for (( i=1; i<=`wc -l < ${pathToAnsible}Clients_Config`; i++ ))
@@ -143,28 +88,17 @@ Create_Results_Directories ()
 	done 
 }
 
-# Step 3: Configure Remote Systems for testing
-	# Check to make sure storage is mounted
-	# Check to make sure folder for loadtest is made /mmfs1/NVME/frametest/$HOSTNAME
-	# Prepare Results directory
-	# Send scripts over to remote hosts
-	# Make sure frametest and fio are on remote systems
-
-
+### Run Ansible Host Config ###
+# Runs the host_config ansible script with all needed parameters put into it to make sure that the clients are configured and set up as needed
+# *For more info on the host_config script see inside that script itself 
 Run_Host_Config ()
 {
 	ansible-playbook ${pathToAnsible}host_config.yaml --extra-vars "hosts=Clients_All pathToStorage=$pathToStorage pathToResults=$pathToResults storageSystem=$storageSystem loadType=$loadType pathToScripts=$pathToScripts"
  echo "Storage System: " $storageSystem
 }
 
-
-
-
-# Step 3: execute load script
-	### MAKE SURE LOADTEST SCRIPTS ARE MADE ###
-	# Execute load shell script
-	# send results back to localhost
-
+### Run Ansible Single Hammer Script ###
+# Runs the single_hammer ansible script with all needed parameters put into it which runs the actual load test on the remote systems
 Run_Single_Hammer ()
 {
 	echo "Storage System: "$storageSystem
@@ -175,6 +109,9 @@ Run_Single_Hammer ()
 
 # Step 4: Coalate and Review Results of load tests
 
+
+### Coalate, Review, and Create Optimal ###
+# Based on the loadtest that was run, the results will be coalated and reviewed so that an optimal parameter can be found based on the best bandwith found
 Compare_Single_Results ()
 {
 	if [ $loadType == "frametest" ]
@@ -379,13 +316,9 @@ Compare_Single_Results ()
 	fi
 }
 
-
-
-
-
-# Step 6: Re-run the load test using optimal versions to make sure that they are the best version
-	# (+/-) 5% difference
-
+### Run Optimal Test on All Systems ###
+# Runs the rerun_single_hammer ansible script with all needed parameters put into it to re-run the optimal parameters test
+# Still running on one system at a time, the optimal test is run 5 more times so that an average bandwith can be found for each system
 Run_Single_Hammer_Again ()
 {
 	for ((i=1; i<=5; i++))
@@ -395,9 +328,10 @@ Run_Single_Hammer_Again ()
 	done
 }
 
-
-# Step 7: if it is good then load that as the "ultimate optimal version to be used for all other tests (with +/- the parameters )
-
+### Check Optimal Results ###
+# Checks the results from the 5 optimal parameters tests that were run
+# Averages the results of the 5 tests then determines the percent difference between the original number and the average number, if less than 10% then the IP, results, and parameters are put into the Total_Results.txt file
+# *WILL ADD ON THE EXCEPTION TO RERUN THE ORIGINAL AND OPTIMAL TESTS AND DETERMINE BEST BANDWITH AGAIN IF THE PERCENT DIFFERENCE IS LESS THAN 10% --> if fails a second time then the client will be removed from the continued testing and will be noted in Total_Results.txt
 Check_Results ()
 {
 	resultsFile=/${pathToAnsible}Total_Results.txt
@@ -546,11 +480,10 @@ Check_Results ()
 	fi
 
 	cat $resultsFile
-
 }
 
-# Step 8: remove all hosts from /etc/ansible/hosts
-
+### Remove Hosts ###
+# Removes all the hosts that were added onto the /etc/ansible/hosts file to make sure everything is cleaned up as much as possible
 Delete_Hosts ()
 {
 	startNum=''
@@ -568,8 +501,8 @@ Delete_Hosts ()
 	sed -i ${startNum},${endNum}d /etc/ansible/hosts
 }
 
-
-
+### Main Executing Subroutine ### 
+# This determines what functions are executed and in what order they will be executed in
 Main ()
 {
 	Ask_Questions
@@ -585,7 +518,11 @@ Main ()
 	Delete_Hosts
 }
 
+### RUN MAIN SUBROUTINE ###
 Main
+
+
+
 
 ###################
 # START OF PART 2 #
