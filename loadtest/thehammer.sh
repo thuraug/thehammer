@@ -94,21 +94,14 @@ Create_Results_Directories ()
 Run_Host_Config ()
 {
 	ansible-playbook ${pathToAnsible}host_config.yaml --extra-vars "hosts=Clients_All pathToStorage=$pathToStorage pathToResults=$pathToResults storageSystem=$storageSystem loadType=$loadType pathToScripts=$pathToScripts"
- echo "Storage System: " $storageSystem
 }
 
 ### Run Ansible Single Hammer Script ###
 # Runs the single_hammer ansible script with all needed parameters put into it which runs the actual load test on the remote systems
 Run_Single_Hammer ()
 {
-	echo "Storage System: "$storageSystem
 	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem"
 }
-
-	
-
-# Step 4: Coalate and Review Results of load tests
-
 
 ### Coalate, Review, and Create Optimal ###
 # Based on the loadtest that was run, the results will be coalated and reviewed so that an optimal parameter can be found based on the best bandwith found
@@ -158,50 +151,48 @@ Compare_Single_Results ()
 	
 			done
 	
-		echo $highNum
+			echo $highNum
 	
-		wParameter=''
-		tParameter=''
-		wValue1=''
-		wValue2=''
-		tValue1=''
-		tValue2=''
+			wParameter=''
+			tParameter=''
+			wValue1=''
+			wValue2=''
+			tValue1=''
+			tValue2=''
 	
-		cp "${pathToScripts}frametest.sh" "${pathToScripts}frametest_${ipAddress}_optimal.sh"
+			cp "${pathToScripts}frametest.sh" "${pathToScripts}frametest_${ipAddress}_optimal.sh"
 	
-		echo $highFile
+			echo $highFile
 	
-		for w in $(seq 1 ${#highFile})
-		do
-	
+			for w in $(seq 1 ${#highFile})
+			do
+		
 			if [ "${highFile:$w:1}" == "w" ]
-			then
-				wValue1=$[ $w + 1]
-			fi
-			if [ "${highFile:$w:1}" == "t" ]
-			then
-				wValue2=$w
-				wParameter="${highFile:$wValue1:$[ wValue2 - wValue1 ]}"
-			fi
-		done	
+				then
+					wValue1=$[ $w + 1]
+				fi
+				if [ "${highFile:$w:1}" == "t" ]
+				then
+					wValue2=$w
+					wParameter="${highFile:$wValue1:$[ wValue2 - wValue1 ]}"
+				fi
+			done	
 	
-		for t in $(seq 1 ${#highFile})
-		do
-			if [ "${highFile:$t:1}" == "t" ]
-			then
-				tValue1=$[ $t + 1]
-			fi
-			if [ "${highFile:$t:1}" == "." ]
-			then
-				tValue2=$t
-				tParameter="${highFile:$tValue1:$[ tValue2 - tValue1 ]}"
-			fi
-		done
+			for t in $(seq 1 ${#highFile})
+			do
+				if [ "${highFile:$t:1}" == "t" ]
+				then
+					tValue1=$[ $t + 1]
+				fi
+				if [ "${highFile:$t:1}" == "." ]
+				then
+					tValue2=$t
+					tParameter="${highFile:$tValue1:$[ tValue2 - tValue1 ]}"
+				fi
+			done
 	
-		sed -i '/wParameters="2k 4k 90000 125000"/c\wParameters='${wParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
-		sed -i '/tParameters="4 8 12 16"/c\tParameters='${tParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
-
-
+			sed -i '/wParameters="2k 4k 90000 125000"/c\wParameters='${wParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
+			sed -i '/tParameters="4 8 12 16"/c\tParameters='${tParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
 		done
 	fi
 
