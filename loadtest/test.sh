@@ -5,6 +5,11 @@ storageSystem=''
 tier=''
 pathToResults=''
 resultsDirectory=''
+bs=''
+iod=''
+nj=''
+w=''
+t=''
 
 for ((i=1; i<=`wc -l < Config_File.txt`; i++))
 do
@@ -44,7 +49,6 @@ do
 			echo 'TIER does not have a correct option. Please correct with either "NVME", "NLSAS" or "SAS"'
 			echo "Error is on line ${i} here: ${line}"
 		fi
-		
 	elif [ "${line:0:16}" == "RESULTSDIRECTORY" ]
 	then
 		[ ! -d ${line:17} ] && mkdir ${line:17}
@@ -66,17 +70,28 @@ do
 	then
 		if [ ${line:0:3} == "BS" ]
 		then
-			echo ${line:4}
+			bs=${line:4}
+			echo $bs
 		elif [ ${line:0:4} == "IOD" ]
 		then
-			echo ${line:5}
+			iod=${line:5}
+			echo $iod
 		elif [ ${line:0:3} == "NJ" ]
 		then
-			echo ${line:4}
+			nj=${line:4}
+			echo $nj
 		fi	
 	elif [ "$loadType" == "frametest" ]
 	then
-		echo no
+		if [ ${line:0:2} == "W" ]
+		then
+			w=${line:3}
+			echo $w
+		elif [ ${line:0:2} == "T" ]
+		then
+			t=${line:3}
+			echo $t
+		fi
 	fi
 done 
 

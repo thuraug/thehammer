@@ -69,7 +69,6 @@ Configure_Hosts ()
 # Creates all the necessary directories to store all the results from the actual load testing
 Create_Results_Directories ()
 {
-	[ ! -d /DIST ] && mkdir /DIST
 	[ ! -d ${pathToResults} ] && mkdir ${pathToResults}
 	
 	for (( i=1; i<=`wc -l < ${pathToAnsible}Clients_Config`; i++ ))
