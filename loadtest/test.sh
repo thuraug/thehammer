@@ -8,13 +8,14 @@ do
 	
 	if [ "${line:0:8}" == "LOADTYPE" ]
 	then
-		echo ${line:9}
 		if [[ `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "frametest" || `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "fio" ]]
 		then
 			loadType=`echo ${line:9} | tr '[:upper:]' '[:lower:]'`
+			echo $loadType
 		else
 			echo 'LOADTYPE does not have a correct option. Please correct with either "frametest" or "fio"'
-			echo "error is here: ${line}"
+			echo "error is on line ${i} here: ${line}"
+			exit
 		fi
 	elif [ "${line:0:11}" == "STORAGETYPE" ]
 	then
