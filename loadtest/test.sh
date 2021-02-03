@@ -49,7 +49,7 @@ do
 	then
 		[ ! -d ${line:17} ] && mkdir ${line:17}
 
-		if [ "${line:-1}" == "/" ]
+		if [ "${line: (-1)}" == "/" ]
 		then
 			resultsDirectory="${line:17}"
 		else
