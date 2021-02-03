@@ -1,40 +1,44 @@
 #!/bin/bash
 
-hostsArray=''
+loadType=''
 
-
-for line in `cat /etc/ansible/hosts | grep Client_`
+for ((i=1; i<=`wc -l < Config_File.txt`; i++))
 do
-	hostsArray+=${line:1:-1}" "
-done
-
-echo $hostsArray
-
-for hostSet in $hostsArray
-do
-	pathToTestResults="/DIST/LOAD_TEST_RESULTS/${hostSet:0:-5}/${hostSet}/"
-	echo $hostSet
-	echo $pathToTestResults
+	line=`sed -n ${i}p Config_File.txt`
 	
-	echo "RUN ANSIBLE SCRIPTS"
-	for num in "1 2 3 4 5"
-	do
-		ansible-playbook ${pathToAnsible}parallel_hammer.yaml --extra-vars "hosts=${hostSet} pathToScript=${pathToScripts} pathToStorage=${pathToStorage} testType=${loadType} pathToResults=${pathToResults} testNum=${num} systemStorage=${storageSystem} clientSet=${hostSet} pathToLocalResults=${pathToTestResults}"	
-	done
-
-
-	echo "COALATE AND PRESENT RESULTS"
-
-	if [ "${loadType}" == "frametest" ]
+	if [ "${line:0:8}" == "LOADTYPE" ]
 	then
-		echo "frametest"
-	fi
-	if [ "${loadType}" == "fio" ]
+		echo ${line:9}
+		loadType=${line:9}
+	elif [ "${line:0:11}" == "STORAGETYPE" ]
 	then
-		echo "fio"
+		echo ${line:12}
+	elif [ "${line:0:4}" == "TIER" ]
+	then
+		echo ${line:5}
+	elif [ "${line:0:16}" == "RESULTSDIRECTORY" ]
+	then
+		echo ${line:17}
 	fi
-done
 
+	
+	if [ "$loadType" == "fio" ]
+	then
+		if [ ${line:0:3} == "BS" ]
+		then
+			echo ${line:4}
+		elif [ ${line:0:4} == "IOD" ]
+		then
+			echo ${line:5}
+		elif [ ${line:0:3} == "NJ" ]
+		then
+			echo ${line:4}
+		fi	
+	elif [ "$loadType" == "frametest" ]
+	then
+		echo no
+	fi
+done 
 
 
 	 	
