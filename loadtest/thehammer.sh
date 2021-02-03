@@ -5,33 +5,108 @@
  
 ### Variables ###
 whoami=`whoami`
-storageSystem=
-tier=
-loadType=
-pathToResults="/DIST/LOAD_TEST_RESULTS/"
+storageSystem=''
+tier=''
+loadType=''
+resultsDirectory=''
+pathToResults=''
 pathToStorage=''
-pathToScripts="/ansible/loadtest/scripts/"
-pathToAnsible="/ansible/loadtest/"
+bs=''
+iod=''
+nj=''
+w=''
+t=''
+pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
+pathToAnsible="/git_workspace/thehammer/loadtest/"
 
 ### Flat File Config ###
 # Create a flat config file checker to ensure that the script is running as it should
 Check_Config_File ()
 {
+	for ((i=1; i<=`wc -l < Config_File.txt`; i++))
+	do
+	line=`sed -n ${i}p Config_File.txt`
 	
-}
-
-### Ask Questions of User ###
-# *Not a permanent solution -- only used for testing
-Ask_Questions ()
-{
-	read -p "What type of storage?" storageSystem
-	if [ $storageSystem == "gpfs" ]
+	if [ "${line:0:8}" == "LOADTYPE" ]
 	then
-		read -p "What tier you on?" tier
-	fi
-	read -p "What load test?" loadType
+		if [[ `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "frametest" || `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "fio" ]]
+		then
+			loadType=`echo ${line:9} | tr '[:upper:]' '[:lower:]'`
+			echo $loadType
+		else
+			figlet 'ERROR'
+			echo 'LOADTYPE does not have a correct option. Please correct with either "frametest" or "fio"'
+			echo "Error is on line ${i} here: ${line}"
+			exit
+		fi
+	elif [ "${line:0:11}" == "STORAGETYPE" ]
+	then
+		if [[ `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "gpfs" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "vast" ]]
+		then
+			storageSystem=`echo "${line:12}" | tr '[:upper:]' '[:lower:]'`
+			echo $storageSystem
+		else
+			figlet 'ERROR'
+			echo 'STORAGETYPE does not have a correct option. Please correct with either "gpfs" or "vast"'
+			echo "Error is on line ${i} here: ${line}"
+			exit
+		fi
+	elif [ "${line:0:4}" == "TIER" ]
+	then
+		if [[ `echo "${line:5}" | tr '[:lower:]' '[:upper:]'` == "NVME" || `echo "${line:5}" | tr '[:lower:]' '[:upper:]'` == "NLSAS" || `echo "${line:5}" | tr '[:lower:]' '[:upper:]'` == "SAS" ]]
+		then
+			tier=`echo "${line:5}" | tr '[:lower:]' '[:upper:]'`
+			echo $tier
+		else
+			figlet 'ERROR'
+			echo 'TIER does not have a correct option. Please correct with either "NVME", "NLSAS" or "SAS"'
+			echo "Error is on line ${i} here: ${line}"
+			exit
+		fi
+	elif [ "${line:0:16}" == "RESULTSDIRECTORY" ]
+	then
+		[ ! -d ${line:17} ] && mkdir ${line:17}
 
-	echo "Storage System: " $storageSystem
+		if [ "${line: (-1)}" == "/" ]
+		then
+			resultsDirectory="${line:17}"
+		else
+			resultsDirectory="${line:17}/"
+		fi
+
+		pathToResults=${resultsDirectory}LOAD_TEST_RESULTS/
+		
+		echo $pathToResults
+	fi
+
+	if [ "$loadType" == "fio" ]
+	then
+		if [ ${line:0:3} == "BS" ]
+		then
+			bs=${line:4}
+			echo $bs
+		elif [ ${line:0:4} == "IOD" ]
+		then
+			iod=${line:5}
+			echo $iod
+		elif [ ${line:0:3} == "NJ" ]
+		then
+			nj=${line:4}
+			echo $nj
+		fi	
+	elif [ "$loadType" == "frametest" ]
+	then
+		if [ ${line:0:2} == "W" ]
+		then
+			w=${line:3}
+			echo $w
+		elif [ ${line:0:2} == "T" ]
+		then
+			t=${line:3}
+			echo $t
+		fi
+	fi
+done 
 }
 
 ### Configure Path to Storage ###
@@ -54,6 +129,7 @@ Configure_Hosts ()
 {
 	if [ `wc -l < ${pathToAnsible}Clients_Config` == 0 ]
 	then
+		figlet 'ERROR'
 		echo "Please provide the lists of hosts you would like to test on in the ${pathToAnsible}Client_Config File"
 		exit
 	else
@@ -91,7 +167,7 @@ Create_Results_Directories ()
 # *For more info on the host_config script see inside that script itself 
 Run_Host_Config ()
 {
-	ansible-playbook ${pathToAnsible}host_config.yaml --extra-vars "hosts=Clients_All pathToStorage=$pathToStorage pathToResults=$pathToResults storageSystem=$storageSystem loadType=$loadType pathToScripts=$pathToScripts"
+	ansible-playbook ${pathToAnsible}host_config.yaml --extra-vars "hosts=Clients_All pathToStorage=$pathToStorage pathToResults=$pathToResults storageSystem=$storageSystem loadType=$loadType pathToScripts=$pathToScripts w=$w t=$t bs=$bs iod=$iod nj=$nj"
 }
 
 ### Run Ansible Single Hammer Script ###
@@ -100,6 +176,7 @@ Run_Single_Hammer ()
 {
 	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem"
 }
+
 ### Create the Optimal Frametest Script ###
 # Creates the optimal frametest script using the original frametest script and the best parameters 
 Create_Frametest_Optimal ()
@@ -116,33 +193,33 @@ Create_Frametest_Optimal ()
 	echo $highFile
 	
 			
-	for w in $(seq 1 ${#highFile})
+	for wi in $(seq 1 ${#highFile})
 	do
 	
-		if [ "${highFile:$w:1}" == "w" ]
+		if [ "${highFile:$wi:1}" == "w" ]
 		then
-			wValue1=$[ $w + 1]
-		elif [ "${highFile:$w:1}" == "t" ]
+			wValue1=$[ $wi + 1]
+		elif [ "${highFile:$wi:1}" == "t" ]
 		then
-			wValue2=$w
+			wValue2=$wi
 			wParameter="${highFile:$wValue1:$[ wValue2 - wValue1 ]}"
 		fi
 	done	
 	
-	for t in $(seq 1 ${#highFile})
+	for ti in $(seq 1 ${#highFile})
 	do
-		if [ "${highFile:$t:1}" == "t" ]
+		if [ "${highFile:$ti:1}" == "t" ]
 		then
-			tValue1=$[ $t + 1]
-		elif [ "${highFile:$t:1}" == "." ]
+			tValue1=$[ $ti + 1]
+		elif [ "${highFile:$ti:1}" == "." ]
 		then
-			tValue2=$t
+			tValue2=$ti
 			tParameter="${highFile:$tValue1:$[ tValue2 - tValue1 ]}"
 		fi
 	done
 	
-	sed -i '/wParameters="2k 4k 90000 125000"/c\wParameters='${wParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
-	sed -i '/tParameters="4 8 12 16"/c\tParameters='${tParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
+	sed -i '/wParameters=$w/c\wParameters='${wParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
+	sed -i '/tParameters=$t/c\tParameters='${tParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
 }
 
 ### Create the Optimal Fio Script ###
@@ -159,48 +236,48 @@ Create_Fio_Optimal ()
 	njValue1=''
 	njValue2=''
 
-	cp /ansible/loadtest/scripts/fio.sh /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
+	cp "${pathToScripts}fio.sh" "${pathToScripts}fio_${ipAddress}_optimal.sh"
 
-	for bs in $(seq 1 ${#highFile})
+	for bsi in $(seq 1 ${#highFile})
 	do
-		if [ "${highFile:$bs:2}" == "bs" ]
+		if [ "${highFile:$bsi:2}" == "bs" ]
 		then
-			bsValue1=$[ $bs + 2 ]
-		elif [ "${highFile:$bs:1}" == "i" ]
+			bsValue1=$[ $bsi + 2 ]
+		elif [ "${highFile:$bsi:1}" == "i" ]
 		then
-			bsValue2=$bs
+			bsValue2=$bsi
 			bsParameter="${highFile:$bsValue1:$[ $bsValue2 - bsValue1 ]}"
 		fi
 	done
 	echo $bsParameter
-	for iod in $(seq 1 ${#highFile})
+	for iodi in $(seq 1 ${#highFile})
 	do
-		if [ "${highFile:$iod:3}" == "iod" ]
+		if [ "${highFile:$iodi:3}" == "iod" ]
 		then
-			iodValue1=$[ $iod + 3 ]
-		elif [ "${highFile:$iod:1}" == "n" ] 
+			iodValue1=$[ $iodi + 3 ]
+		elif [ "${highFile:$iodi:1}" == "n" ] 
 		then
-			iodValue2=$iod
+			iodValue2=$iodi
 			iodParameter="${highFile:$iodValue1:$[ iodValue2 - iodValue1 ]}"
 		fi
 	done
 	echo $iodParameter
-	for nj in $(seq 1 ${#highFile})
+	for nji in $(seq 1 ${#highFile})
 	do
-		if [ "${highFile:$nj:2}" == "nj" ]
+		if [ "${highFile:$nji:2}" == "nj" ]
 		then
-			njValue1=$[ $nj + 2 ]
-		elif [ "${highFile:$nj:1}" == "." ]
+			njValue1=$[ $nji + 2 ]
+		elif [ "${highFile:$nji:1}" == "." ]
 		then
-			njValue2=$nj
+			njValue2=$nji
 			njParameter="${highFile:$njValue1:$[ njValue2 - njValue1 ]}"
 		fi
 	done
 	echo $njParameter
 	
-	sed -i '/bsParameters="1m"/c\bsParameters='${bsParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
-	sed -i '/iodepthParameters="8 16 32"/c\iodepthParameters='${iodParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
-	sed -i '/numjobsParameters="16 32 64"/c\numjobsParameters='${njParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
+	sed -i '/bsParameters=$bs/c\bsParameters='${bsParameter}'' ${pathToScripts}fio_${ipAddress}_optimal.sh
+	sed -i '/iodepthParameters=$iod/c\iodepthParameters='${iodParameter}'' ${pathToScripts}fio_${ipAddress}_optimal.sh
+	sed -i '/numjobsParameters=$nj/c\numjobsParameters='${njParameter}'' ${pathToScripts}fio_${ipAddress}_optimal.sh
 }
 
 ### Coalate, Review, and Create Optimal ###
@@ -223,13 +300,11 @@ Compare_Single_Results ()
 		do
 			file1=`sed -n ${i}p $tempFile`
 
-			#frametest
 			if [ $loadType == "frametest" ]
 			then
 				firstNum=`sed -n 9p ${pathToResults}Client_1/${ipAddress}/${file1}`
 				arrayOfValues+=${firstNum:10:-8}" " 
 				array+=${firstNum:10:-8}"-${file1} "
-				#fio
 			elif [ $loadType == "fio" ]
 			then
 				firstNum=`tail -1 ${fullPathToResults}${file1}`
@@ -262,13 +337,11 @@ Compare_Single_Results ()
 	
 		echo $highNum
 	
-		#frametest
 		if [ $loadType == "frametest" ]
 		then
 			Create_Frametest_Optimal
 		elif [ $loadType == "fio" ]
 		then
-		#fio
 			Create_Fio_Optimal
 		fi
 	done
@@ -433,7 +506,7 @@ Delete_Hosts ()
 # This determines what functions are executed and in what order they will be executed in
 Main ()
 {
-	Ask_Questions
+	Check_Config_File
 	Configure_Path_To_Storage
 	Configure_Hosts
 	Create_Results_Directories
@@ -472,7 +545,7 @@ Parrallel_Run_Tests ()
 
 	for hostSet in $hostsarray
 	do
-		pathToTestResults="/DIST/LOAD_TEST_RESULTS/${hostSet:0:-5}/${hostSet}/"
+		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
 		Run_Parrallel_Hammer
 		Coalate_Results
 	done

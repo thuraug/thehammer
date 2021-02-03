@@ -3,6 +3,8 @@
 pathToStorage=$1
 pathToResults=$2
 pathToScripts=$3
+w=$4
+t=$5
 
 ipAddress=`ip route get 1.2.3.4 | awk '{print $7}'`
 octet=${ipAddress:11:3}
@@ -11,8 +13,8 @@ then
 	octet="0"$octet
 fi
 
-wParameters="2k 4k 90000 125000"
-tParameters="4 8 12 16"
+wParameters=$w
+tParameters=$t
 
 for wValue in $wParameters
 do

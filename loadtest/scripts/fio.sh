@@ -3,6 +3,9 @@
 pathToStorage=$1
 pathToResults=$2
 pathToScripts=$3
+bs=$4
+iod=$5
+nj=$6
 
 ipAddress=`ip route get 1.2.3.4 | awk '{print $7}'`
 octet=${ipAddress:11:3}
@@ -11,9 +14,9 @@ then
 	octet="0"$octet
 fi
 
-bsParameters="1m 4m 8m"
-iodepthParameters="8 16 32"
-numjobsParameters="16 32 64"
+bsParameters=$bs
+iodepthParameters=$iod
+numjobsParameters=$nj
 
 for bsValue in $bsParameters
 do
