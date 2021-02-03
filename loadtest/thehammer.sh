@@ -15,11 +15,10 @@ pathToAnsible="/ansible/loadtest/"
 
 ### Flat File Config ###
 # Create a flat config file checker to ensure that the script is running as it should
-
-
-
-
-
+Check_Config_File ()
+{
+	
+}
 
 ### Ask Questions of User ###
 # *Not a permanent solution -- only used for testing
