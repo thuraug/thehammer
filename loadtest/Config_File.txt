@@ -1,8 +1,7 @@
 Config File for The Hammer:
 LOADTYPE=frametest
-STORAGETYPE=gpfs
-TIER=nvme
+STORAGETYPE=vast
 RESULTSDIRECTORY=/DIST/
 PARAMETER:
-	W=4k
-	T=16
+	W=2k 4k 90000 125000
+	T=4 8 12 16

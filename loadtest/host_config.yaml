@@ -44,22 +44,22 @@
     - name: check if hostname folder is made
       stat:
         path: "{{ vastPathToStorage.stdout }}{{ hostname.stdout }}"
-      register: hostnameExists
+      register: hostnameVastExists
       when: storageSystem == "vast"
         
     - name: check if hostname folder is made
       stat:
         path: "{{ pathToStorage }}{{ hostname.stdout }}"
-      register: hostnameExists
+      register: hostnameGPFSExists
       when: storageSystem == "gpfs"
 
     - name: Create Hostname folder on vast storage
       shell: mkdir "{{ vastPathToStorage.stdout }}{{ hostname.stdout }}" 
-      when: storageSystem == "vast" and vastIsMounted.stst.exists and hostnameExists.stat.exists == false
+      when: storageSystem == "vast" and vastIsMounted.stat.exists and hostnameVastExists.stat.exists == False
 
     - name: Create hostname folder on storage
       shell: mkdir "{{ pathToStorage }}{{hostname.stdout }}"
-      when: storageSystem == "gpfs" and storageIsMounted.stat.exists and hostnameExists.stat.exists == false
+      when: storageSystem == "gpfs" and storageIsMounted.stat.exists and hostnameGPFSExists.stat.exists == False
     
     - name: Check for /DIST/LOAD_TEST_RESULTS
       stat:
@@ -72,8 +72,8 @@
 
     - name: Send Scripts Folder
       copy: 
-        src: /ansible/loadtest/scripts
-        dest: /etc/ansible/
+        src: "{{ pathToScripts }}"
+        dest: /etc/ansible/scripts
 
     - name: install fio
       yum:

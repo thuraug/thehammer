@@ -11,11 +11,11 @@ loadType=''
 resultsDirectory=''
 pathToResults=''
 pathToStorage=''
-bs=''
-iod=''
-nj=''
-w=''
-t=''
+bs=' '
+iod=' '
+nj=' '
+w=' '
+t=' '
 pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
 pathToAnsible="/git_workspace/thehammer/loadtest/"
 
@@ -106,7 +106,8 @@ Check_Config_File ()
 			echo $t
 		fi
 	fi
-done 
+done
+
 }
 
 ### Configure Path to Storage ###
@@ -133,7 +134,7 @@ Configure_Hosts ()
 		echo "Please provide the lists of hosts you would like to test on in the ${pathToAnsible}Client_Config File"
 		exit
 	else
-		${pathToAnsible}host_sorting.sh	
+		${pathToAnsible}host_sorting.sh ${pathToAnsible}Clients_Config
 	fi
 	
 	echo "####################"
@@ -167,14 +168,14 @@ Create_Results_Directories ()
 # *For more info on the host_config script see inside that script itself 
 Run_Host_Config ()
 {
-	ansible-playbook ${pathToAnsible}host_config.yaml --extra-vars "hosts=Clients_All pathToStorage=$pathToStorage pathToResults=$pathToResults storageSystem=$storageSystem loadType=$loadType pathToScripts=$pathToScripts w=$w t=$t bs=$bs iod=$iod nj=$nj"
+	ansible-playbook ${pathToAnsible}host_config.yaml --extra-vars "hosts=Clients_All pathToStorage=$pathToStorage pathToResults=$pathToResults storageSystem=$storageSystem loadType=$loadType pathToScripts=$pathToScripts"
 }
 
 ### Run Ansible Single Hammer Script ###
 # Runs the single_hammer ansible script with all needed parameters put into it which runs the actual load test on the remote systems
 Run_Single_Hammer ()
 {
-	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem"
+	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem w=$w t=$t bs=$bs iod=$iod nj=$nj"
 }
 
 ### Create the Optimal Frametest Script ###

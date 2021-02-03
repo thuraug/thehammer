@@ -2,7 +2,10 @@
 
 ### THIS SHIT WORKS DO NOT FUCK WITH IT
 
-n=`wc -l < /ansible/loadtest/Clients_Config`
+ClientListFile=$1
+
+
+n=`wc -l < $ClientListFile`
 A=1
 
 Factorial () 
@@ -50,7 +53,7 @@ funct ()
 	if [ $rn == 2 ]	
 	then
 		g=''
-		for((w=1; w <= `wc -l < /ansible/loadtest/Clients_Config`; w++))
+		for((w=1; w <= `wc -l < $ClientListFile`; w++))
 		do
 			g+=$w' '
 		done
@@ -67,7 +70,7 @@ funct ()
 									
 				for((s=0; s<`echo -n $arraytest | wc -c`; s++))
 				do
-					echo `sed -n ${arraytest:${s}:1}p /ansible/loadtest/Clients_Config` >> /etc/ansible/hosts
+					echo `sed -n ${arraytest:${s}:1}p $ClientListFile` >> /etc/ansible/hosts
 
 				done
 				i=$[ $i + 1]
@@ -101,9 +104,9 @@ funct ()
 	else
 		printf "\n\n" >> /etc/ansible/hosts
 		echo "[Clients_All]" >> /etc/ansible/hosts
-		for((f=1; f <= `wc -l < /ansible/loadtest/Clients_Config`; f++))
+		for((f=1; f <= `wc -l < $ClientListFile`; f++))
 		do 
-			echo `sed -n ${f}p /ansible/loadtest/Clients_Config` >> /etc/ansible/hosts
+			echo `sed -n ${f}p $ClientListFile` >> /etc/ansible/hosts
 		i=$[ $i + 1 ]
 		done
 		i=$[ $i + 1]
@@ -151,7 +154,7 @@ create_sort_list ()
 									
 								for((s=0; s<`echo -n $arraytest | wc -c`; s++))
 								do
-									echo `sed -n ${arraytest:${s}:1}p /ansible/loadtest/Clients_Config` >> /etc/ansible/hosts
+									echo `sed -n ${arraytest:${s}:1}p $ClientListFile` >> /etc/ansible/hosts
 								done
 
 							fi
@@ -172,7 +175,7 @@ create_sort_list ()
 									
 				for((s=0; s<`echo -n $arraytest | wc -c`; s++))
 				do
-					echo `sed -n ${arraytest:${s}:1}p /ansible/loadtest/Clients_Config` >> /etc/ansible/hosts
+					echo `sed -n ${arraytest:${s}:1}p $ClientListFile` >> /etc/ansible/hosts
 				done
 
 				t=$j

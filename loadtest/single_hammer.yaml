@@ -11,6 +11,11 @@
     pathToResult:  "{{ pathToResults }}"
     slashVar: "/"
     systemStorage: "{{ systemStorage }}"
+    w: "{{ w }}"
+    t: "{{ t }}"
+    bs: "{{ bs }}"
+    iod: "{{ iod }}"
+    nj: "{{ nj }}"
 
   tasks:
 
@@ -45,11 +50,11 @@
       register: ipAddress
 
     - name: Execute Frametest.sh
-      shell: /etc/ansible/scripts/frametest.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}"
+      shell: /etc/ansible/scripts/frametest.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ w }}" "{{ t }}"
       when: testType == "frametest"
 
     - name: Execute fio
-      shell: /etc/ansible/scripts/fio.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}"
+      shell: /etc/ansible/scripts/fio.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
       when: testType == "fio"
     
     - name: Fetch Results Files
