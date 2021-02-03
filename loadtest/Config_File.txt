@@ -1,5 +1,5 @@
 Config File for The Hammer:
-LOADTYPE=fio
+LOADTYPE=FIO
 STORAGETYPE=gpfs
 TIER=nvme
 RESULTSDIRECTORY=/DIST/

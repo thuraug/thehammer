@@ -9,7 +9,7 @@ do
 	if [ "${line:0:8}" == "LOADTYPE" ]
 	then
 		echo ${line:9}
-		if [ `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "frametest" || `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "fio"]
+		if [[ `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "frametest" || `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "fio" ]]
 		then
 			loadType=${line:9}
 		fi
