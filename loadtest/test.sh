@@ -37,6 +37,7 @@ do
 			figlet 'ERROR'
 			echo 'STORAGETYPE does not have a correct option. Please correct with either "gpfs" or "vast"'
 			echo "Error is on line ${i} here: ${line}"
+			exit
 		fi
 	elif [ "${line:0:4}" == "TIER" ]
 	then
@@ -48,6 +49,7 @@ do
 			figlet 'ERROR'
 			echo 'TIER does not have a correct option. Please correct with either "NVME", "NLSAS" or "SAS"'
 			echo "Error is on line ${i} here: ${line}"
+			exit
 		fi
 	elif [ "${line:0:16}" == "RESULTSDIRECTORY" ]
 	then
