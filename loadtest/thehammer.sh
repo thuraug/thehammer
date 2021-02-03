@@ -83,26 +83,26 @@ Check_Config_File ()
 	then
 		if [ ${line:0:3} == "BS" ]
 		then
-			bs=${line:4}
+			bs="${line:4}"
 			echo $bs
 		elif [ ${line:0:4} == "IOD" ]
 		then
-			iod=${line:5}
+			iod="${line:5}"
 			echo $iod
 		elif [ ${line:0:3} == "NJ" ]
 		then
-			nj=${line:4}
+			nj="${line:4}"
 			echo $nj
 		fi	
 	elif [ "$loadType" == "frametest" ]
 	then
 		if [ ${line:0:2} == "W" ]
 		then
-			w=${line:3}
+			w="${line:3}"
 			echo $w
 		elif [ ${line:0:2} == "T" ]
 		then
-			t=${line:3}
+			t="${line:3}"
 			echo $t
 		fi
 	fi
@@ -175,7 +175,8 @@ Run_Host_Config ()
 # Runs the single_hammer ansible script with all needed parameters put into it which runs the actual load test on the remote systems
 Run_Single_Hammer ()
 {
-	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem w=$w t=$t bs=$bs iod=$iod nj=$nj"
+	echo $w
+	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem w='${w}' t='${t}' bs='${bs}' iod='${iod}' nj='${nj}'"
 }
 
 ### Create the Optimal Frametest Script ###

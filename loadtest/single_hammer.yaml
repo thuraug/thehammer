@@ -40,7 +40,7 @@
       when: systemStorage == "gpfs"
 
     - debug:
-        var: fullPath
+        var: w
 
     - name: ensure everything is the proper permissions
       shell: chmod 755 /etc/ansible/scripts/*
