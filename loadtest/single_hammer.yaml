@@ -31,12 +31,12 @@
     
     - name: get full vastpath 
       shell: ls / | grep vast1 > /tmp/temp.txt && sed -n 1p /tmp/temp.txt > /tmp/holder.txt; printf "/" && printf `cat /tmp/holder.txt` && printf "/frametest/" && printf `hostname` && printf "/"
-      register: fullPath
+      register: fullVastPath
       when: systemStorage == "vast"
 
     - name: get full gpfs path
       shell: echo "{{ pathToStorage }}{{ hostname.stdout }}/"
-      register: fullPath
+      register: fullGPFSPath
       when: systemStorage == "gpfs"
 
     - debug:
@@ -49,13 +49,21 @@
       shell: ip route get 1.2.3.4 | awk '{print $7}'
       register: ipAddress
 
-    - name: Execute Frametest.sh
-      shell: /etc/ansible/scripts/frametest.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ w }}" "{{ t }}"
-      when: testType == "frametest"
+    - name: Execute Frametest.sh vast
+      shell: /etc/ansible/scripts/frametest.sh "{{ fullVastPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ w }}" "{{ t }}"
+      when: testType == "frametest" and systemStorage == "vast"
 
-    - name: Execute fio
-      shell: /etc/ansible/scripts/fio.sh "{{ fullPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
-      when: testType == "fio"
+    - name: Execute Frametest.sh gpfs
+      shell: /etc/ansible/scripts/frametest.sh "{{ fullGPFSPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ w }}" "{{ t }}"
+      when: testType == "frametest" and systemStorage == "gpfs"
+
+    - name: Execute fio vast
+      shell: /etc/ansible/scripts/fio.sh "{{ fullVastPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
+      when: testType == "fio" and systemStorage == "vast"
+
+    - name: Execute fio gpfs
+      shell: /etc/ansible/scripts/fio.sh "{{ fullGPFSPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
+      when: testType == "fio" and systemStorage == "gpfs"
     
     - name: Fetch Results Files
       shell: rsync -av "{{ pathToResults }} {{ localhost.stdout }}{{ pathToResults }}Client_1/{{ipAddress.stdout}}"

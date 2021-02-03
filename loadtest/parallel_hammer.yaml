@@ -60,7 +60,7 @@
 
     - name: send optimal frametest
       copy:
-        src: /ansible/loadtest/scripts/
+        src: "{{ pathToScripts }}"
         dest: /etc/ansible/scripts    
 
     - name: ensure everything is the proper permissions
@@ -76,13 +76,21 @@
       register: pathToFio
       when: testType == "fio"
     
+    - name: Execute Frametest.sh Vast
+      shell: "{{ pathToFrametest.stdout }} {{ fullVastPath.stdout }} {{ fullPathToResults.stdout }} {{ pathToScripts }}"
+      when: testType == "frametest" and systemStorage == "vast"
+
+    - name: Execute fio Vast
+      shell: "{{ pathToFio.stdout }} {{ fullVastPath.stdout }} {{ fullPathToResults.stdout }}/ {{ pathToScripts }}"
+      when: testType == "fio" and systemStorage == "vast"
+
     - name: Execute Frametest.sh
-      shell: "{{ pathToFrametest.stdout }} {{ fullPath.stdout }} {{ fullPathToResults.stdout }} {{ pathToScripts }}"
-      when: testType == "frametest"
+      shell: "{{ pathToFrametest.stdout }} {{ fullGPFSPath.stdout }} {{ fullPathToResults.stdout }} {{ pathToScripts }}"
+      when: testType == "frametest" and systemStorage == "gpfs"
 
     - name: Execute fio
-      shell: "{{ pathToFio.stdout }} {{ fullPath.stdout }} {{ fullPathToResults.stdout }}/ {{ pathToScripts }}"
-      when: testType == "fio"
+      shell: "{{ pathToFio.stdout }} {{ fullGPFSPath.stdout }} {{ fullPathToResults.stdout }}/ {{ pathToScripts }}"
+      when: testType == "fio" and systemStorage == "gpfs"
     
     - name: Fetch Results Files
       shell: rsync -av "{{ fullPathToResults.stdout }}"  "{{ localhost.stdout }}{{ pathToLocalResults }}"
