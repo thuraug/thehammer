@@ -102,209 +102,178 @@ Run_Single_Hammer ()
 {
 	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem"
 }
+### Create the Optimal Frametest Script ###
+# Creates the optimal frametest script using the original frametest script and the best parameters 
+Create_Frametest_Optimal ()
+{
+	wParameter=''
+	tParameter=''
+	wValue1=''
+	wValue2=''
+	tValue1=''
+	tValue2=''
+	
+	cp "${pathToScripts}frametest.sh" "${pathToScripts}frametest_${ipAddress}_optimal.sh"
+	
+	echo $highFile
+	
+			
+	for w in $(seq 1 ${#highFile})
+	do
+	
+		if [ "${highFile:$w:1}" == "w" ]
+		then
+			wValue1=$[ $w + 1]
+		elif [ "${highFile:$w:1}" == "t" ]
+		then
+			wValue2=$w
+			wParameter="${highFile:$wValue1:$[ wValue2 - wValue1 ]}"
+		fi
+	done	
+	
+	for t in $(seq 1 ${#highFile})
+	do
+		if [ "${highFile:$t:1}" == "t" ]
+		then
+			tValue1=$[ $t + 1]
+		elif [ "${highFile:$t:1}" == "." ]
+		then
+			tValue2=$t
+			tParameter="${highFile:$tValue1:$[ tValue2 - tValue1 ]}"
+		fi
+	done
+	
+	sed -i '/wParameters="2k 4k 90000 125000"/c\wParameters='${wParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
+	sed -i '/tParameters="4 8 12 16"/c\tParameters='${tParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
+}
+
+### Create the Optimal Fio Script ###
+# Creates the optimal fio script using the original fio script and the best parameters
+Create_Fio_Optimal ()
+{
+	bsParameter=''
+	iodParameter=''
+	njParamter=''
+	bsValue1=''
+	bsValue2=''
+	iodValue1=''
+	iodValue2=''
+	njValue1=''
+	njValue2=''
+
+	cp /ansible/loadtest/scripts/fio.sh /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
+
+	for bs in $(seq 1 ${#highFile})
+	do
+		if [ "${highFile:$bs:2}" == "bs" ]
+		then
+			bsValue1=$[ $bs + 2 ]
+		elif [ "${highFile:$bs:1}" == "i" ]
+		then
+			bsValue2=$bs
+			bsParameter="${highFile:$bsValue1:$[ $bsValue2 - bsValue1 ]}"
+		fi
+	done
+	echo $bsParameter
+	for iod in $(seq 1 ${#highFile})
+	do
+		if [ "${highFile:$iod:3}" == "iod" ]
+		then
+			iodValue1=$[ $iod + 3 ]
+		elif [ "${highFile:$iod:1}" == "n" ] 
+		then
+			iodValue2=$iod
+			iodParameter="${highFile:$iodValue1:$[ iodValue2 - iodValue1 ]}"
+		fi
+	done
+	echo $iodParameter
+	for nj in $(seq 1 ${#highFile})
+	do
+		if [ "${highFile:$nj:2}" == "nj" ]
+		then
+			njValue1=$[ $nj + 2 ]
+		elif [ "${highFile:$nj:1}" == "." ]
+		then
+			njValue2=$nj
+			njParameter="${highFile:$njValue1:$[ njValue2 - njValue1 ]}"
+		fi
+	done
+	echo $njParameter
+	
+	sed -i '/bsParameters="1m"/c\bsParameters='${bsParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
+	sed -i '/iodepthParameters="8 16 32"/c\iodepthParameters='${iodParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
+	sed -i '/numjobsParameters="16 32 64"/c\numjobsParameters='${njParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
+}
 
 ### Coalate, Review, and Create Optimal ###
 # Based on the loadtest that was run, the results will be coalated and reviewed so that an optimal parameter can be found based on the best bandwith found
 Compare_Single_Results ()
 {
-	if [ $loadType == "frametest" ]
-	then
-	 	for client in `ls ${pathToResults}Client_1`
-		do
-			ipAddress="$client"
-			fullPathToResults=${pathToResults}Client_1/${ipAddress}/
-			tempFile=/tmp/temp.txt
-			highNum=
-			highFile=
-			comparingArray=''
-			array=''
+	for client in `ls ${pathToResults}Client_1`
+	do
+		ipAddress="$client"
+		fullPathToResults=${pathToResults}Client_1/${ipAddress}/
+		tempFile=/tmp/temp.txt
+		highNum=
+		highFile=
+		arrayOfValues=''
+		array=''
 	
-			ls ${pathToResults}Client_1/$client/ > $tempFile
-			
-			for (( i=1; i<=`wc -l < ${tempFile}`; i++))
-			do
-				file1=`sed -n ${i}p $tempFile`
+		ls ${pathToResults}Client_1/$client/ > $tempFile
+
+		for (( i=1; i<=`wc -l < ${tempFile}`; i++))
+		do
+			file1=`sed -n ${i}p $tempFile`
+
+			#frametest
+			if [ $loadType == "frametest" ]
+			then
 				firstNum=`sed -n 9p ${pathToResults}Client_1/${ipAddress}/${file1}`
-				echo $firstNum
-				comparingArray+=${firstNum:10:-8}" " 
+				arrayOfValues+=${firstNum:10:-8}" " 
 				array+=${firstNum:10:-8}"-${file1} "
-			done
-		
-			highNum=`echo $comparingArray | head -n1 | awk '{print $1}'`
-			
-			for i in ${comparingArray}
-			do
-				if [[ "${i}" -gt "${highNum}" ]]
-				then
-					highNum=$i
-				fi
-			done
-			
-			length=`echo -n $highNum | wc -c`
-			
-			for i in $array
-			do
-				if [[ $highNum == ${i:0:$length} ]]
-				then
-					highFile=$i
-				fi
-	
-			done
-	
-			echo $highNum
-	
-			wParameter=''
-			tParameter=''
-			wValue1=''
-			wValue2=''
-			tValue1=''
-			tValue2=''
-	
-			cp "${pathToScripts}frametest.sh" "${pathToScripts}frametest_${ipAddress}_optimal.sh"
-	
-			echo $highFile
-	
-			for w in $(seq 1 ${#highFile})
-			do
-		
-			if [ "${highFile:$w:1}" == "w" ]
-				then
-					wValue1=$[ $w + 1]
-				fi
-				if [ "${highFile:$w:1}" == "t" ]
-				then
-					wValue2=$w
-					wParameter="${highFile:$wValue1:$[ wValue2 - wValue1 ]}"
-				fi
-			done	
-	
-			for t in $(seq 1 ${#highFile})
-			do
-				if [ "${highFile:$t:1}" == "t" ]
-				then
-					tValue1=$[ $t + 1]
-				fi
-				if [ "${highFile:$t:1}" == "." ]
-				then
-					tValue2=$t
-					tParameter="${highFile:$tValue1:$[ tValue2 - tValue1 ]}"
-				fi
-			done
-	
-			sed -i '/wParameters="2k 4k 90000 125000"/c\wParameters='${wParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
-			sed -i '/tParameters="4 8 12 16"/c\tParameters='${tParameter}'' ${pathToScripts}frametest_${ipAddress}_optimal.sh
-		done
-	fi
-
-	if [ $loadType == "fio" ]
-	then
-		
-		for client in `ls ${pathToResults}Client_1`
-		do
-			ipAddress=$client
-			fullPathToResults=${pathToResults}Client_1/$ipAddress/
-			tempFile=/tmp/temp.txt
-			arrayOfValues=''
-			highNum=
-			highFile=
-			array=''
-	
-			touch /tmp/temp.txt
-
-			ls ${fullPathToResults} > $tempFile
-
-			for (( i=1; i<=`wc -l < ${tempFile}`; i++))
-			do
-				file1=`sed -n ${i}p ${tempFile}`
+				#fio
+			elif [ $loadType == "fio" ]
+			then
 				firstNum=`tail -1 ${fullPathToResults}${file1}`
-
 				arrayOfValues+=${firstNum:23:4}" "
 				array+=${firstNum:23:4}"-${file1} "	
-			done
-
-			highNum=`echo $arrayOfValues | head -n1 | awk '{print $1}'`
-
-			for i in ${arrayOfValues}
-			do
-				if (( $(echo "$i" > "$highNum" | bc  ) ))
-				then
-					highNum=$i
-				fi
-			done
+			fi
+		done
 		
-			echo $highNum
-			length=`echo -n $highNum | wc -c`
+		highNum=`echo $arrayOfValues | head -n1 | awk '{print $1}'`
+			
+		for i in ${arrayOfValues}
+		do
+			if [[ "${i}" -gt "${highNum}" ]]
+			then
+				highNum=$i
+			fi
+		done
+			
+		length=`echo -n $highNum | wc -c`
+			
+		for i in $array
+		do
+			if [[ $highNum == ${i:0:$length} ]]
+			then
+				highFile=$i
+				break
+			fi
 	
-			for i in $array
-			do
-				if [[ $highNum == ${i:0:$length} ]]
-				then
-					highFile=$i
-					break
-				fi
-			done
+		done
 	
-			echo $highFile
-
-			bsParameter=''
-			iodParameter=''
-			njParamter=''
-			bsValue1=''
-			bsValue2=''
-			iodValue1=''
-			iodValue2=''
-			njValue1=''
-			njValue2=''
-
-			cp /ansible/loadtest/scripts/fio.sh /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
-
-			for bs in $(seq 1 ${#highFile})
-			do
-				if [ "${highFile:$bs:2}" == "bs" ]
-				then
-					bsValue1=$[ $bs + 2 ]
-				fi
-				if [ "${highFile:$bs:1}" == "i" ]
-				then
-					bsValue2=$bs
-					bsParameter="${highFile:$bsValue1:$[ $bsValue2 - bsValue1 ]}"
-				fi
-			done
-			echo $bsParameter
-			for iod in $(seq 1 ${#highFile})
-			do
-				if [ "${highFile:$iod:3}" == "iod" ]
-				then
-					iodValue1=$[ $iod + 3 ]
-				fi
-				if [ "${highFile:$iod:1}" == "n" ] 
-				then
-					iodValue2=$iod
-					iodParameter="${highFile:$iodValue1:$[ iodValue2 - iodValue1 ]}"
-				fi
-			done
-			echo $iodParameter
-			for nj in $(seq 1 ${#highFile})
-			do
-				if [ "${highFile:$nj:2}" == "nj" ]
-				then
-					njValue1=$[ $nj + 2 ]
-				fi
-				if [ "${highFile:$nj:1}" == "." ]
-					then
-				njValue2=$nj
-						njParameter="${highFile:$njValue1:$[ njValue2 - njValue1 ]}"
-				fi
-			done
-			echo $njParameter
+		echo $highNum
 	
-	
-			sed -i '/bsParameters="1m"/c\bsParameters='${bsParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
-			sed -i '/iodepthParameters="8 16 32"/c\iodepthParameters='${iodParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
-			sed -i '/numjobsParameters="16 32 64"/c\numjobsParameters='${njParameter}'' /ansible/loadtest/scripts/fio_${ipAddress}_optimal.sh
-	
-		done	
-	fi
+		#frametest
+		if [ $loadType == "frametest" ]
+		then
+			Create_Frametest_Optimal
+		elif [ $loadType == "fio" ]
+		then
+		#fio
+			Create_Fio_Optimal
+		fi
+	done
 }
 
 ### Run Optimal Test on All Systems ###
@@ -319,156 +288,126 @@ Run_Single_Hammer_Again ()
 	done
 }
 
+### Average Results ###
+# Averages the results from the optimal tests 
+Average_Results ()
+{
+	numTotal=0
+	num=0
+			
+	for i in $arrayOfValues
+	do
+		numTotal=$( echo $numTotal + $i | bc)
+		num=$[ $num + 1 ]
+	done
+		
+	numAverage=$( echo $numTotal / $num | bc)
+
+	return $numAverage
+}
+
+### Determines the Percent Difference ###
+# Determines the percent difference between the average results and the original results
+Percent_Difference ()
+{
+	j=1
+	if [ "$numAverage" -lt "$originalNum" ]
+	then
+		j=-1
+	fi
+		
+	var1=$[ $[ $numAverage - $originalNum ] ]
+	var2=$[ $[ $numAverage + $originalNum ] / 2 ]
+			
+	percentDiff=`echo "scale=2 ; ($var1/$var2*100*$j)" | bc`
+	echo "Percent Difference: "$percentDiff		
+
+	return $percentDiff
+}
+
+### Adding the Results to Flat File ###
+# Adds the averaged results from the optimal tests to the flat results file 
+Add_To_Results_File ()
+{
+	printf "\n\n\n\n######################################################\n" >> ${resultsFile}
+	figlet "${ipAddress}" >> ${resultsFile}
+	printf "######################################################\n" >> ${resultsFile}
+	printf "\n\n" >> ${resultsFile}
+	echo "The optimal setting for ${ipAddress} are: ${fileName:4:-4}" >> ${resultsFile}
+	echo "The Averaged bandwith is: "$numAverage" MB/s" >> ${resultsFile}
+}
+
 ### Check Optimal Results ###
 # Checks the results from the 5 optimal parameters tests that were run
 # Averages the results of the 5 tests then determines the percent difference between the original number and the average number, if less than 10% then the IP, results, and parameters are put into the Total_Results.txt file
 # *WILL ADD ON THE EXCEPTION TO RERUN THE ORIGINAL AND OPTIMAL TESTS AND DETERMINE BEST BANDWITH AGAIN IF THE PERCENT DIFFERENCE IS LESS THAN 10% --> if fails a second time then the client will be removed from the continued testing and will be noted in Total_Results.txt
 Check_Results ()
 {
-	resultsFile=/${pathToAnsible}Total_Results.txt
+	maxPercentDifference=5
 
+	resultsFile=/${pathToAnsible}Total_Results.txt
 	touch ${pathToAnsible}Total_Results.txt
 
-	cat /dev/null > ${pathToAnsible}Total_Results.txt	
+	cat /dev/null > ${pathToAnsible}Total_Results.txt
 
 	printf "\n" >> ${resultsFile}
 	figlet "RESULTS" >> ${resultsFile}
 	
-	if [ $loadType == "frametest" ]
-	then	
-		for client in `ls ${pathToResults}Client_1`
-		do
-			ipAddress=$client
-			fullPathToResults=${pathToResults}Client_1/$ipAddress/
-			tempFile=/tmp/temp.txt
-			arrayOfValues=''
-			
-			touch /tmp/temp.txt
-		
-			ls ${fullPathToResults}1 > /tmp/temp.txt
-			fileName=`sed -n 1p /tmp/temp.txt`
-			
-			listOfNums='1 2 3 4 5'
+	for client in `ls ${pathToResults}Client_1`
+	do
+		ipAddress=$client
+		fullPathToResults=${pathToResults}Client_1/$ipAddress/
+		tempFile=/tmp/temp.txt
+		arrayOfValues=''
+		originalNum=''
 
+		touch /tmp/temp.txt
+
+		ls ${fullPathToResults}1 > /tmp/temp.txt
+		fileName=`sed -n 1p /tmp/temp.txt`
 			
-			for i in $listOfNums
-			do
+		for i in "1 2 3 4 5"
+		do
+			## Frametest specific
+			if [ $loadType == "frametest" ]
+			then
 				h=`sed -n 9p "${fullPathToResults}${i}/${fileName}"`
-				
 				arrayOfValues+=${h:10:-8}" "
-				
-			done
-			
-			numTotal=0
-			num=0
-			
-			for i in $arrayOfValues
-			do
-				numTotal=$[ $numTotal + $i ]
-				num=$[ $num + 1 ]
-			done
-		
-			numAverage=$[ $numTotal / $num ]
-			
-			printf "\n\n"
-			echo "Averaged Number: "$numAverage
-			
-			var=`sed -n 9p "${fullPathToResults}/$fileName"`
-			originalNum=${var:10:-8}
-		
-			echo "Original Number: "$originalNum 
-		
-			j=1
-			if [ "$numAverage" -lt "$originalNum" ]
+			elif [ $loadType == "fio" ]
 			then
-				j=-1
-			fi
-		
-			var1=$[ $[ $numAverage - $originalNum ] ]
-			var2=$[ $[ $numAverage + $originalNum ] / 2 ]
-			
-			percentDiff=`echo "scale=2 ; ($var1/$var2*100*$j)" | bc`
-			echo "Percent Difference: "$percentDiff		
-		
-			if [ `echo -n "${percentDiff}" | wc -c` -lt 5 ]
-			then
-				
-				printf "\n\n\n\n######################################################\n" >> ${resultsFile}
-				figlet "${ipAddress}" >> ${resultsFile}
-				printf "######################################################\n" >> ${resultsFile}
-				printf "\n\n" >> ${resultsFile}
-				echo "The optimal setting for ${ipAddress} are: ${fileName:4:-4}" >> ${resultsFile}
-				echo "The Averaged bandwith is: "$numAverage" MB/s" >> ${resultsFile}
-			fi
-		done
-	fi
-	if [ $loadType == "fio" ]
-	then
-	
-		for client in `ls ${pathToResults}Client_1`
-		do
-			ipAddress=$client
-			fullPathToResults=${pathToResults}Client_1/$ipAddress/
-			tempFile=/tmp/temp.txt
-			arrayOfValues=''
-
-			touch $tempFile
-
-			ls ${fullPathToResults}1 > ${tempFile}
-			filename=`sed -n 1p $tempFile`
-
-			listOfNums='1 2 3 4 5'
-	
-			for i in $listOfNums
-			do
+				## Fio Specific
 				h=`tail -1 "${fullPathToResults}${i}/${filename}"`
 				arrayOfValues+=${h:23:4}" "
-			done
-
-			numTotal=0
-			num=0
-
-			for i in $arrayOfValues
-			do
-				numTotal=$( echo $numTotal + $i | bc )
-				num=$[ $num + 1 ]
-			done
-
-			numAverage=$( echo $numTotal / $num | bc )
-
-			printf "\n\n"
-			echo "Average Number: "$numAverage
-
-			var=`tail -1 ${fullPathToResults}$filename`
-			originalNum=${var:23:4}
-	
-			echo "Original Number: "$originalNum
-
-			j=1
-			if (( $(echo "$numAverage" < "$originalNum" | bc ) ))
-			then
-				j=-1
-			fi
-	
-			var1=$(echo  "$numAverage" - "$originalNum" | bc )
-			var2=$( echo $( echo "$numAverage" + "$originalNum" | bc ) / 2 | bc)
-
-			percentDiff=`echo "($var1 / $var2 * 100 * $j)" | bc `
-			echo $percentDiff
-
-			percent="5.0"
-
-			if [ `echo -n "${percentDiff}" | wc -c` -lt 5 ]
-			then
-				printf "\n\n\n\n##########################################\n" >> ${resultsFile}
-				figlet "${ipAddress}" >> ${resultsFile}
-				printf "##########################################\n" >> ${resultsFile}
-				printf "\n\n" >> ${resultsFile}
-				echo "The optimal setting for ${ipAddress} are: ${filename:4:-4}" >> ${resultsFile}
-				echo "The average bandwith is: "$numAverage" GB/s" >> ${resultsFile}
 			fi
 		done
-	fi
+
+		# Averaging the Results here
+		numAverage=Average_Results
+	
+		printf "\n\n"
+		echo "Averaged Number: "$numAverage
+		
+		## Frametest specific
+		if [ $loadType == "frametest" ]
+		then
+			var=`sed -n 9p "${fullPathToResults}/$fileName"`
+			originalNum=${var:10:-8}
+		elif [ $loadType == "fio" ]
+		then
+			var=`tail -1 ${fullPathToResults}$filename`
+			originalNum=${var:23:4}
+		fi
+		
+		echo "Original Number: "$originalNum 
+		
+		# Finding the percent difference
+		percentDiff=Percent_Difference	
+	
+		if [ `echo -n "${percentDiff}" | wc -c` -lt ${maxPercentDifference} ]
+		then
+			Add_To_Results_File
+		fi
+	done
 
 	cat $resultsFile
 }
@@ -522,7 +461,48 @@ Main
 
 # As long as the optimal tests succeeded then continue on to here
 # step one is to create an array full of the the different ansible hosts that need to be run
-	# this will also denote the file path that we will need to go into		
+	# this will also denote the file path that we will need to go into
+	
+Parrallel_Run_Tests ()
+{
+	hostsArray=''
+
+	for line in `cat /etc/ansible/hosts | cat Client_`
+	do
+		hostsArray+=${line:1:-1}" "
+	done
+
+	for hostSet in $hostsarray
+	do
+		pathToTestResults="/DIST/LOAD_TEST_RESULTS/${hostSet:0:-5}/${hostSet}/"
+		Run_Parrallel_Hammer
+		Coalate_Results
+	done
+}
+
+Run_Parrallel_Hammer ()
+{
+	for num in "1 2 3 4 5"
+	do
+		ansible-playbook ${pathToAnsible}parallel_hammer.yaml --extra-vars "hosts=${hostSet} pathToScript=${pathToScripts} pathToStorage=${pathToStorage} testType=${loadType} pathToResults=${pathToResults} testNum=${num} systemStorage=${storageSystem} clientSet=${hostSet} pathToLocalResults=${pathToTestResults}"
+	done
+}
+
+Coalate_Results ()
+{
+	if [ "${loadType}" == "frametest" ]
+	then
+		echo "frametest"
+	fi
+	if [ "${loadType}" == "fio" ]
+	then
+		echo "fio"
+	fi
+}
+
+
+
+
 
 # Create the continuous re-run ansible test each one running at the exact same time
 #	How many times to run and average total results --> keep track of all this information in overall text file
