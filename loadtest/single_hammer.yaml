@@ -64,8 +64,8 @@
     - name: Execute fio gpfs
       shell: /etc/ansible/scripts/fio.sh "{{ fullGPFSPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
       when: testType == "fio" and systemStorage == "gpfs"
-    
+ 
     - name: Fetch Results Files
-      shell: rsync -av "{{ pathToResults }} {{ localhost.stdout }}{{ pathToResults }}Client_1/{{ipAddress.stdout}}"
+      shell: rsync -av "{{ pathToResults }}" "{{ localhost.stdout }}{{ pathToResults }}Client_1/{{ ipAddress.stdout }}/"
     
        
