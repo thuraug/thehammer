@@ -495,7 +495,7 @@ Parrallel_Run_Tests ()
 {
 	hostsArray=''
 
-	for line in `cat /etc/ansible/hosts | cat Client_`
+	for line in `cat /etc/ansible/hosts | grep Client_`
 	do
 		hostsArray+=${line:1:-1}" "
 	done
