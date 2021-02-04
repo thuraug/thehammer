@@ -43,9 +43,6 @@
       register: fullGPFSPath
       when: systemStorage == "gpfs"
     
-    - debug:
-        var: systemStorage  
-
     - name: IP Variable
       shell: echo `ip route get 1.2.3.4 | awk '{print $7}'`
       register: ipAddress

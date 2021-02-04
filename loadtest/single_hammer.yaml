@@ -39,9 +39,6 @@
       register: fullGPFSPath
       when: systemStorage == "gpfs"
 
-    - debug:
-        var: w
-
     - name: ensure everything is the proper permissions
       shell: chmod 755 /etc/ansible/scripts/*
     
