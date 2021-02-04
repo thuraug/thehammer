@@ -175,7 +175,6 @@ Run_Host_Config ()
 # Runs the single_hammer ansible script with all needed parameters put into it which runs the actual load test on the remote systems
 Run_Single_Hammer ()
 {
-	echo $w
 	ansible-playbook ${pathToAnsible}single_hammer.yaml --extra-vars "pathToScript=$pathToScript hosts=Clients_All pathToStorage=$pathToStorage testType=$loadType pathToResults=$pathToResults systemStorage=$storageSystem w='${w}' t='${t}' bs='${bs}' iod='${iod}' nj='${nj}'"
 }
 
@@ -357,7 +356,6 @@ Run_Single_Hammer_Again ()
 	for ((i=1; i<=5; i++))
 	do
 		ansible-playbook ${pathToAnsible}rerun_single_hammer.yaml --extra-vars "hosts=Clients_All pathToScript=${pathToScripts} pathToStorage=$pathToStorage testType=$loadType pathToResults=${pathToResults} testNum=$i systemStorage=$storageSystem"
-		echo "Storage System: "$storageSystem
 	done
 }
 
