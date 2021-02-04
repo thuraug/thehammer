@@ -499,12 +499,12 @@ Parrallel_Run_Tests ()
 		hostsArray+=${line:1:-1}" "
 	done
 
-	for hostSet in $hostsarray
+	for hostSet in $hostsArray
 	do
 		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
 		echo $pathToTestResults
 		Run_Parrallel_Hammer
-		#Coalate_Results
+		Coalate_Results
 	done
 }
 
@@ -556,16 +556,16 @@ Main ()
 {
 	Check_Config_File
 	Configure_Path_To_Storage
-	Configure_Hosts
-	Create_Results_Directories
-	Run_Host_Config
-	Run_Single_Hammer
-	Compare_Single_Results
-	Run_Single_Hammer_Again	
-	Check_Results
+#	Configure_Hosts
+#	Create_Results_Directories
+#	Run_Host_Config
+#	Run_Single_Hammer
+#	Compare_Single_Results
+#	Run_Single_Hammer_Again	
+#	Check_Results
 	Parrallel_Run_Tests
 
-	Delete_Hosts
+#	Delete_Hosts
 }
 
 ### RUN MAIN SUBROUTINE ###

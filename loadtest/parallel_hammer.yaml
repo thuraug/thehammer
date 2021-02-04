@@ -15,8 +15,8 @@
     clientSet: "{{ clientSet }}"
     pathToLocalResults: "{{ pathToLocalResults }}"
 
-  tasks:
-    
+  tasks:   
+ 
     - name: Full Path
       shell: echo "{{ pathToResults }}{{ clientSet }}/{{ testNum }}"
       register: fullPathToResults
@@ -28,16 +28,16 @@
 
     - name: make ClientSet Dir
       shell: mkdir "{{ pathToResults }}{{ clientSet }}"
-      when: clientSetExists.stat.exists
-
+      when: clientSetExists.stat.exists == False
+    
     - name: check for testNum
       stat:
         path: "{{ fullPathToResults.stdout }}"
       register: testNumExists
 
     - name: Make testNum dir
-      shell: mkdir "{{ fullPathToResults }}"
-      when: testNumExists.stat.exists
+      shell: mkdir "{{ fullPathToResults.stdout }}"
+      when: testNumExists.stat.exists == False
 
     - name: get LocalHost IP
       shell: ip=`hostname -I`; octet=${ip:0:13}; echo "${octet}:"
@@ -46,12 +46,12 @@
 
     - name: get full vastpath 
       shell: ls / | grep vast1 > /tmp/temp.txt && sed -n 1p /tmp/temp.txt > /tmp/holder.txt; printf "/" && printf `cat /tmp/holder.txt` && printf "/frametest/" && printf `hostname` && printf "/"
-      register: fullPath
+      register: fullVastPath
       when:  systemStorage == "vast"
 
     - name: get full gpfs path
       shell: echo "{{ pathToStorage }}"
-      register: fullPath
+      register: fullGPFSPath
       when: systemStorage == "gpfs"
 
     - name: IP Variable
