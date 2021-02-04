@@ -437,7 +437,7 @@ Check_Results ()
 		ls ${fullPathToResults}1 > /tmp/temp.txt
 		fileName=`sed -n 1p /tmp/temp.txt`
 			
-		for i in "1 2 3 4 5"
+		for i in '1 2 3 4 5'
 		do
 			## Frametest specific
 			if [ $loadType == "frametest" ]
@@ -453,7 +453,7 @@ Check_Results ()
 		done
 
 		# Averaging the Results here
-		numAverage=Average_Results
+		numAverage=$(Average_Results)
 	
 		printf "\n\n"
 		echo "Averaged Number: "$numAverage
@@ -472,7 +472,7 @@ Check_Results ()
 		echo "Original Number: "$originalNum 
 		
 		# Finding the percent difference
-		percentDiff=Percent_Difference	
+		percentDiff=$(Percent_Difference)	
 	
 		if [ `echo -n "${percentDiff}" | wc -c` -lt ${maxPercentDifference} ]
 		then
