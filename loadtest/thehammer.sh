@@ -502,6 +502,7 @@ Parrallel_Run_Tests ()
 	for hostSet in $hostsarray
 	do
 		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
+		echo $pathToTestResults
 		Run_Parrallel_Hammer
 		#Coalate_Results
 	done
