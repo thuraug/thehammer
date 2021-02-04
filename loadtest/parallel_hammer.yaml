@@ -93,5 +93,5 @@
       when: testType == "fio" and systemStorage == "gpfs"
     
     - name: Fetch Results Files
-      shell: rsync -av "{{ fullPathToResults.stdout }}"  "{{ localhost.stdout }}{{ pathToLocalResults }}"
+      shell: rsync -av "{{ fullPathToResults.stdout }}" "{{ localhost.stdout }}{{ pathToLocalResults }}"
     

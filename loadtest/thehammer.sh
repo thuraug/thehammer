@@ -19,6 +19,7 @@ t=' '
 pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
 pathToAnsible="/git_workspace/thehammer/loadtest/"
 
+
 ### Flat File Config ###
 # Create a flat config file checker to ensure that the script is running as it should
 Check_Config_File ()
@@ -373,8 +374,6 @@ Average_Results ()
 	done
 		
 	numAverage=$( echo $numTotal / $num | bc)
-
-	return $numAverage
 }
 
 ### Determines the Percent Difference ###
@@ -382,7 +381,7 @@ Average_Results ()
 Percent_Difference ()
 {
 	j=1
-	if [ "$numAverage" -lt "$originalNum" ]
+	if [[] "$numAverage" -lt "$originalNum" ]]
 	then
 		j=-1
 	fi
@@ -392,8 +391,6 @@ Percent_Difference ()
 			
 	percentDiff=`echo "scale=2 ; ($var1/$var2*100*$j)" | bc`
 	echo "Percent Difference: "$percentDiff		
-
-	return $percentDiff
 }
 
 ### Adding the Results to Flat File ###
@@ -426,6 +423,8 @@ Check_Results ()
 	
 	for client in `ls ${pathToResults}Client_1`
 	do
+		percentDiff=''
+		numAverage=''
 		ipAddress=$client
 		fullPathToResults=${pathToResults}Client_1/$ipAddress/
 		tempFile=/tmp/temp.txt
@@ -436,8 +435,10 @@ Check_Results ()
 
 		ls ${fullPathToResults}1 > /tmp/temp.txt
 		fileName=`sed -n 1p /tmp/temp.txt`
+
+		listNum="1 2 3 4 5"
 			
-		for i in '1 2 3 4 5'
+		for i in $listNum
 		do
 			## Frametest specific
 			if [ $loadType == "frametest" ]
@@ -453,7 +454,7 @@ Check_Results ()
 		done
 
 		# Averaging the Results here
-		numAverage=$(Average_Results)
+		Average_Results
 	
 		printf "\n\n"
 		echo "Averaged Number: "$numAverage
@@ -472,7 +473,7 @@ Check_Results ()
 		echo "Original Number: "$originalNum 
 		
 		# Finding the percent difference
-		percentDiff=$(Percent_Difference)	
+		percent_Difference	
 	
 		if [ `echo -n "${percentDiff}" | wc -c` -lt ${maxPercentDifference} ]
 		then
@@ -482,6 +483,53 @@ Check_Results ()
 
 	cat $resultsFile
 }
+
+
+###################
+# TESTING SECTION #
+###################
+
+
+
+Parrallel_Run_Tests ()
+{
+	hostsArray=''
+
+	for line in `cat /etc/ansible/hosts | cat Client_`
+	do
+		hostsArray+=${line:1:-1}" "
+	done
+
+	for hostSet in $hostsarray
+	do
+		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
+		Run_Parrallel_Hammer
+		#Coalate_Results
+	done
+}
+
+Run_Parrallel_Hammer ()
+{
+	for num in "1 2 3 4 5"
+	do
+		ansible-playbook ${pathToAnsible}parallel_hammer.yaml --extra-vars "hosts=${hostSet} pathToScript=${pathToScripts} pathToStorage=${pathToStorage} testType=${loadType} pathToResults=${pathToResults} testNum=${num} systemStorage=${storageSystem} clientSet=${hostSet} pathToLocalResults=${pathToTestResults}"
+	done
+}
+
+Coalate_Results ()
+{
+	if [ "${loadType}" == "frametest" ]
+	then
+		echo "frametest"
+	fi
+	if [ "${loadType}" == "fio" ]
+	then
+		echo "fio"
+	fi
+}
+
+
+
 
 ### Remove Hosts ###
 # Removes all the hosts that were added onto the /etc/ansible/hosts file to make sure everything is cleaned up as much as possible
@@ -515,6 +563,7 @@ Main ()
 	Compare_Single_Results
 	Run_Single_Hammer_Again	
 	Check_Results
+	Parrallel_Run_Tests
 
 	Delete_Hosts
 }
@@ -534,42 +583,7 @@ Main
 # step one is to create an array full of the the different ansible hosts that need to be run
 	# this will also denote the file path that we will need to go into
 	
-Parrallel_Run_Tests ()
-{
-	hostsArray=''
 
-	for line in `cat /etc/ansible/hosts | cat Client_`
-	do
-		hostsArray+=${line:1:-1}" "
-	done
-
-	for hostSet in $hostsarray
-	do
-		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
-		Run_Parrallel_Hammer
-		Coalate_Results
-	done
-}
-
-Run_Parrallel_Hammer ()
-{
-	for num in "1 2 3 4 5"
-	do
-		ansible-playbook ${pathToAnsible}parallel_hammer.yaml --extra-vars "hosts=${hostSet} pathToScript=${pathToScripts} pathToStorage=${pathToStorage} testType=${loadType} pathToResults=${pathToResults} testNum=${num} systemStorage=${storageSystem} clientSet=${hostSet} pathToLocalResults=${pathToTestResults}"
-	done
-}
-
-Coalate_Results ()
-{
-	if [ "${loadType}" == "frametest" ]
-	then
-		echo "frametest"
-	fi
-	if [ "${loadType}" == "fio" ]
-	then
-		echo "fio"
-	fi
-}
 
 
 
