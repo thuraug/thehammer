@@ -471,7 +471,7 @@ Check_Results ()
 		echo "Original Number: "$originalNum 
 		
 		# Finding the percent difference
-		percent_Difference	
+		Percent_Difference	
 	
 		if [ `echo -n "${percentDiff}" | wc -c` -lt ${maxPercentDifference} ]
 		then
