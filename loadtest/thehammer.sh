@@ -502,7 +502,7 @@ Parrallel_Run_Tests ()
 	do
 		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
 		echo $pathToTestResults
-		Run_Parrallel_Hammer
+		#Run_Parrallel_Hammer
 		Coalate_Results
 	done
 }
@@ -547,13 +547,13 @@ Coalate_Results ()
 			parameters=''
 			if [[ $loadType == "frametest" ]]
 			then
-				if [ "${bClientHosts}" < "${numOfClients}" ]
+				if [ "${bClientHosts}" != "${numOfClients}" ]
 				then
 					name=`sed -n 5p ${pathToTestNum}${file}`
 					parameters=`sed -n 7p ${pathToTestNum}${file}`		
 
 					hostnames+="${name:9} && "
-					bClientHosts+=$[ ${bClientHosts} + 1 ]
+					bClientHosts=$[ ${bClientHosts} + 1 ]
 				fi
 
 				h=`sed -n 9p "${pathToTestNum}${file}"`
@@ -589,7 +589,7 @@ Coalate_Results ()
 		echo "Combined Bandwith: $totalBandwith" >> $resultsFile
 	
 		# Add the totalBandwith for this test number into the Client Subset Results file
-		arrayOfValues+=${totalBandwith}
+		arrayOfValues+="${totalBandwith} "
 	done
 
 	Average_Results
@@ -632,16 +632,16 @@ Main ()
 {
 	Check_Config_File
 	Configure_Path_To_Storage
-	Configure_Hosts
-	Create_Results_Directories
-	Run_Host_Config
-	Run_Single_Hammer
-	Compare_Single_Results
-	Run_Single_Hammer_Again	
-	Check_Results
+#	Configure_Hosts
+#	Create_Results_Directories
+#	Run_Host_Config
+#	Run_Single_Hammer
+#	Compare_Single_Results
+#	Run_Single_Hammer_Again	
+#	Check_Results
 	Parrallel_Run_Tests
 
-#	Delete_Hosts
+	Delete_Hosts
 }
 
 ### RUN MAIN SUBROUTINE ###
