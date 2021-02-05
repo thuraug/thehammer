@@ -594,6 +594,7 @@ Coalate_Results ()
 
 	Average_Results
 	
+
 	printf "\n\n\n" >> $resultsFile
 	figlet "Average Bandwith" >> $resultsFile
 	echo "Averaged Bandwith: $numAverage" >> $resultsFile
