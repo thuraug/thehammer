@@ -1,41 +1,22 @@
 #!/bin/bash
 
-Parrallel_Run_Tests ()
-{
-	hostsArray=''
 
-	for line in `cat /etc/ansible/hosts | grep Client_`
-	do
-		hostsArray+=${line:1:-1}" "
-	done
 
-	for hostSet in $hostsarray
-	do
-		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
-		Run_Parrallel_Hammer
-		#Coalate_Results
-	done
-}
+# Create a full Results file for each Client Subset
+	# Add in the IP addresses, Client Host Names?, Parameters of each Client
 
-Run_Parrallel_Hammer ()
-{
-	for num in "1 2 3 4 5"
-	do
-		ansible-playbook ${pathToAnsible}parallel_hammer.yaml --extra-vars "hosts=${hostSet} pathToScript=${pathToScripts} pathToStorage=${pathToStorage} testType=${loadType} pathToResults=${pathToResults} testNum=${num} systemStorage=${storageSystem} clientSet=${hostSet} pathToLocalResults=${pathToTestResults}"
-	done
-}
+# add up the total bandwith in each test file and add it to averaging array
+	# Add info about each test to a Client Subset file
+# average all the values present in the averaging array
+# Create Client Subset Results file
+# Add this result to the Total_Results File
+# Add in the following info as well:
+	# All IP addresses
+	# Path to Client Subset file 
+# Show results of each client (cat the results file)
 
-Coalate_Results ()
-{
-	if [ "${loadType}" == "frametest" ]
-	then
-		echo "frametest"
-	fi
-	if [ "${loadType}" == "fio" ]
-	then
-		echo "fio"
-	fi
-}
+
+
 
 
 

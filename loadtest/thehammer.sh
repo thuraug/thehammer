@@ -18,6 +18,7 @@ w=' '
 t=' '
 pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
 pathToAnsible="/git_workspace/thehammer/loadtest/"
+runAmount="1 2 3 4 5"
 
 
 ### Flat File Config ###
@@ -434,10 +435,8 @@ Check_Results ()
 
 		ls ${fullPathToResults}1 > /tmp/temp.txt
 		fileName=`sed -n 1p /tmp/temp.txt`
-
-		listNum="1 2 3 4 5"
 			
-		for i in $listNum
+		for i in $runAmount
 		do
 			## Frametest specific
 			if [ $loadType == "frametest" ]
@@ -510,7 +509,7 @@ Parrallel_Run_Tests ()
 
 Run_Parrallel_Hammer ()
 {
-	for num in "1 2 3 4 5"
+	for num in $runAmount
 	do
 		ansible-playbook ${pathToAnsible}parallel_hammer.yaml --extra-vars "hosts=${hostSet} pathToScript=${pathToScripts} pathToStorage=${pathToStorage} testType=${loadType} pathToResults=${pathToResults} testNum=${num} systemStorage=${storageSystem} clientSet=${hostSet} pathToLocalResults=${pathToTestResults}"
 	done
