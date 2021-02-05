@@ -381,7 +381,7 @@ Average_Results ()
 Percent_Difference ()
 {
 	j=1
-	if [[] "$numAverage" -lt "$originalNum" ]]
+	if [[ "$numAverage" -lt "$originalNum" ]]
 	then
 		j=-1
 	fi
