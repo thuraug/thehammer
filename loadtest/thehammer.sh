@@ -502,7 +502,7 @@ Parrallel_Run_Tests ()
 	do
 		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
 		echo $pathToTestResults
-		Run_Parrallel_Hammer
+		#Run_Parrallel_Hammer
 		Coalate_Results
 	done
 }
@@ -517,14 +517,59 @@ Run_Parrallel_Hammer ()
 
 Coalate_Results ()
 {
-	if [ "${loadType}" == "frametest" ]
-	then
-		echo "frametest"
-	fi
-	if [ "${loadType}" == "fio" ]
-	then
-		echo "fio"
-	fi
+	numAverage=''
+	arrayOfValues=''
+	resultsFile="${pathToAnsible}${hostSet}_Results.txt"
+
+	touch ${resultsFile}
+
+
+	for test in `ls $pathToTestResults`
+	do
+		pathToTestNum="${pathToTestResults}${test}/"
+		totalBandwith=''
+		bandwithArray=''
+		ipAddresses='' #put the ip addresses into here (192.168.10.35 && 192.168.11.207)
+		tempFile=/tmp/temp.txt
+	
+		for file in `ls $pathToTestNum`
+		do
+			if [[ $loadType == "frametest" ]]
+			then
+				h=`sed -n 9p "${pathToTestNum}${file}"`
+				bandwithArray+=${h:10:-8}" "
+
+				echo ${h:10:-8}
+	
+				#Also add h and other information to the Client Subset Result file
+					#Include Test number and individualized bandwith and the corresponding IP Address
+	
+	
+			elif [[ $loadType == "fio" ]]
+			then
+				h=`tail -1 "${pathToTestNum}${file}"`
+				bandwithArray+=${h:23:4}" "
+	
+				echo ${h:23:4}
+
+				#Also add h and other information to the Client Subset Result file
+					#Include Test number and individualized bandwith
+	
+			fi
+		done
+	
+		for value in ${bandwithArray}
+		do
+			totalBandwith=$[ $totalBandwith + $value ]
+		done
+
+		echo $totalBandwith
+	
+		# Add the totalBandwith for this test number into the Client Subset Results file
+		arrayOfValues+=${totalBandwith}
+	done
+
+	Average_Results
 }
 
 
