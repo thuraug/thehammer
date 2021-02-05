@@ -634,12 +634,12 @@ Main ()
 	Check_Config_File
 	Configure_Path_To_Storage
 	Configure_Hosts
-#	Create_Results_Directories
-#	Run_Host_Config
-#	Run_Single_Hammer
-#	Compare_Single_Results
-#	Run_Single_Hammer_Again	
-#	Check_Results
+	Create_Results_Directories
+	Run_Host_Config
+	Run_Single_Hammer
+	Compare_Single_Results
+	Run_Single_Hammer_Again	
+	Check_Results
 	Parrallel_Run_Tests
 
 	Delete_Hosts
