@@ -502,7 +502,7 @@ Parrallel_Run_Tests ()
 	do
 		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
 		echo $pathToTestResults
-		#Run_Parrallel_Hammer
+		Run_Parrallel_Hammer
 		Coalate_Results
 	done
 }
@@ -520,8 +520,13 @@ Coalate_Results ()
 	numAverage=''
 	arrayOfValues=''
 	resultsFile="${pathToAnsible}${hostSet}_Results.txt"
+	totalResultsFile="${pathToAnsible}Total_Results.txt"
+	bClientHosts=0
+	numOfClients="${hostSet:8:1}"
 
 	touch ${resultsFile}
+	figlet 'RESULTS' >> $resultsFile
+	
 
 
 	for test in `ls $pathToTestResults`
@@ -529,28 +534,44 @@ Coalate_Results ()
 		pathToTestNum="${pathToTestResults}${test}/"
 		totalBandwith=''
 		bandwithArray=''
+		hostnames=''
 		ipAddresses='' #put the ip addresses into here (192.168.10.35 && 192.168.11.207)
 		tempFile=/tmp/temp.txt
 	
+		printf "\n\n" >> $resultsFile
+		figlet "Test Number ${test}" >> $resultsFile
+
 		for file in `ls $pathToTestNum`
 		do
+			name=''
+			parameters=''
 			if [[ $loadType == "frametest" ]]
 			then
+				if [[ "${bClientHosts}" != "${numOfClients}" ]]
+				theno
+					name=`sed -n 5p ${pathToTestNum}${file}`
+					parameters=`sed -n 7p ${pathToTestNum}${file}`		
+
+					hostnames+="${name:9} && "
+					bClientHosts+=$[ ${bClientHosts} + 1 ]
+				fi
+
 				h=`sed -n 9p "${pathToTestNum}${file}"`
 				bandwithArray+=${h:10:-8}" "
 
-				echo ${h:10:-8}
-	
 				#Also add h and other information to the Client Subset Result file
 					#Include Test number and individualized bandwith and the corresponding IP Address
-	
-	
+				printf "\n" >> $resultsFile
+				echo "Hostname: ${name:9}" >> $resultsFile
+				echo "Individual Bandwith: ${h:10:-8} MB/s" >> $resultsFile
+				echo "Parameters: ${parameters:12:-1}" >> $resultsFile
+
 			elif [[ $loadType == "fio" ]]
 			then
 				h=`tail -1 "${pathToTestNum}${file}"`
 				bandwithArray+=${h:23:4}" "
 	
-				echo ${h:23:4}
+				echo "Individual Bandwith: ${h:23:4} GB/s"
 
 				#Also add h and other information to the Client Subset Result file
 					#Include Test number and individualized bandwith
@@ -563,13 +584,24 @@ Coalate_Results ()
 			totalBandwith=$[ $totalBandwith + $value ]
 		done
 
-		echo $totalBandwith
+		printf "\n\n" >> $resultsFile
+		echo "Combined Bandwith for ${hostnames:0:-3}" >> $resultsFile
+		echo "Combined Bandwith: $totalBandwith" >> $resultsFile
 	
 		# Add the totalBandwith for this test number into the Client Subset Results file
 		arrayOfValues+=${totalBandwith}
 	done
 
 	Average_Results
+	
+	printf "\n\n\n" >> $resultsFile
+	figlet "Average Bandwith" >> $resultsFile
+	echo "Averaged Bandwith: $numAverage" >> $resultsFile
+
+	printf "\n\n" >> $totalResultsFile
+	figlet "$hostSet" >> $totalResultsFile
+	echo "Clients: ${hostnames:0:-3}" >> $totalResultsFile
+	echo "Average Bandwith: $numAverage" >> $totalResultsFile
 }
 
 
@@ -600,13 +632,13 @@ Main ()
 {
 	Check_Config_File
 	Configure_Path_To_Storage
-#	Configure_Hosts
-#	Create_Results_Directories
-#	Run_Host_Config
-#	Run_Single_Hammer
-#	Compare_Single_Results
-#	Run_Single_Hammer_Again	
-#	Check_Results
+	Configure_Hosts
+	Create_Results_Directories
+	Run_Host_Config
+	Run_Single_Hammer
+	Compare_Single_Results
+	Run_Single_Hammer_Again	
+	Check_Results
 	Parrallel_Run_Tests
 
 #	Delete_Hosts
