@@ -502,7 +502,7 @@ Parrallel_Run_Tests ()
 	do
 		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
 		echo $pathToTestResults
-		#Run_Parrallel_Hammer
+		Run_Parrallel_Hammer
 		Coalate_Results
 	done
 }
