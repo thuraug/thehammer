@@ -548,7 +548,7 @@ Coalate_Results ()
 			if [[ $loadType == "frametest" ]]
 			then
 				if [[ "${bClientHosts}" != "${numOfClients}" ]]
-				theno
+				then
 					name=`sed -n 5p ${pathToTestNum}${file}`
 					parameters=`sed -n 7p ${pathToTestNum}${file}`		
 
