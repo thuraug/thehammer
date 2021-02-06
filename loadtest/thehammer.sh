@@ -602,7 +602,14 @@ Coalate_Results ()
 	printf "\n\n" >> $totalResultsFile
 	figlet "$hostSet" >> $totalResultsFile
 	echo "Clients: ${hostnames:0:-3}" >> $totalResultsFile
-	echo "Average Bandwith: $numAverage" >> $totalResultsFile
+
+	if [ "$loadType" == "frametest"]
+	then
+		echo "Average Bandwith: ${numAverage} MB/s" >> $totalResultsFile
+	elif [ "$loadType" == "fio" ]
+	then
+		echo "Average Bandwith: ${numAverage} GB/s" >> $totalResultsFile
+	fi
 }
 
 
