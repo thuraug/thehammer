@@ -568,10 +568,34 @@ Coalate_Results ()
 
 			elif [[ $loadType == "fio" ]]
 			then
+				if [ "${bClientHosts}" != "${numOfClients}" ]
+				then
+					name=`sed -n 1p ${pathToTestNum}${file}`
+					parameters=`sed -n 1p ${pathToTestNum}${file}`		
+
+					j=0
+					for ((i=1; i<30; i++))
+					do
+						if [ "${name:$i:1}" == ":" ]
+						then
+							j=$i
+							break
+						fi
+					done
+
+
+					hostnames+="${name:0:$j} && "
+					bClientHosts=$[ ${bClientHosts} + 1 ]
+				fi
+				
 				h=`tail -1 "${pathToTestNum}${file}"`
 				bandwithArray+=${h:23:4}" "
-	
-				echo "Individual Bandwith: ${h:23:4} GB/s"
+				
+
+				printf "\n" >> $resultsFile
+				echo "Hostname: ${name:0:$j}" >> $resultsFile
+				echo "Individual Bandwith: ${h:23:4} GB/s" >> $resultsFile
+				echo "Parameters: ${parameters:12}" >> $resultsFile
 
 				#Also add h and other information to the Client Subset Result file
 					#Include Test number and individualized bandwith
