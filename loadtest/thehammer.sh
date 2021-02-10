@@ -122,37 +122,34 @@ Check_Old_Results ()
 
 	if [ "${holder:34:1}" == " " ]
 	then
-<<<<<<< HEAD
-	#	mkdir /DIST/${holder:30}0${holder:35:1}_HammerResults
-		pathToOldResults=$resultsDirectory${holder:30}0${holder:35:1}_HammerResults/
-	else
-	#	mkdir $resultsDirectory${holder:30}${holder:34:2}_HammerResults
-		pathToOldResults=$resultsDirectory${holder:30}${holder:34:2}_HammerResults/
-=======
 		mkdir /DIST/${holder:30:3}0${holder:35:1}_HammerResults
 		pathToOldResults=$resultsDirectory${holder:30:3}0${holder:35:1}_HammerResults/
 	else
 		mkdir $resultsDirectory${holder:30:3}${holder:34:2}_HammerResults
 		pathToOldResults=$resultsDirectory${holder:30:3}${holder:34:2}_HammerResults/
->>>>>>> a83ff6d1bea47f81f950fb96caf28c1548e8d819
 	fi
 
-#	mv ${pathToAnsible}${holder:43} ${pathToOldResults}
+	mv ${pathToAnsible}${holder:43} ${pathToOldResults}
+	echo ${pathToOldResults}
+	echo ${pathToAnsible}${holder:43}
 
-#	ls -l ${pathToAnsible} | grep "Client_" > $temporaryFile
+	ls -l ${pathToAnsible} | grep "Client_" > $temporaryFile
 
-#	for ((i=0; i<=`wc -l < $temporaryFile`; i++))
-#	do
-#		holder=`sed -n ${i}p $temporaryFile`
-#		mv ${pathToAnsible}${holder:43} ${pathToOldResults}
-#	done
+	for ((i=1; i<=`wc -l < $temporaryFile`; i++))
+	do
+		holder=`sed -n ${i}p $temporaryFile`
+		mv ${pathToAnsible}${holder:43} ${pathToOldResults}
 
-#	[ -d  $pathToResults ] && mv $pathToResults ${pathToOldResults}
+	done
 
 
-	echo "####################################################"
+	[ -d  $pathToResults ] && mv $pathToResults ${pathToOldResults}
+
+	echo $pathToResults
+
+	echo "#####################################################"
 	echo "# OLD RESULTS LOCATED IN ${pathToOldResults} #"
-	echo "####################################################"
+	echo "#####################################################"
 }
 
 ### Configure Path to Storage ###
