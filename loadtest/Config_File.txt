@@ -1,7 +1,8 @@
 Config File for The Hammer:
-LOADTYPE=frametest
+LOADTYPE=fio
 STORAGETYPE=vast
 RESULTSDIRECTORY=/DIST/
 PARAMETER:
-	W=2k 4k 90000 125000
-	T=4 8 12 16
+	BS=1m
+	IOD=4 8
+	NJ=16 32
