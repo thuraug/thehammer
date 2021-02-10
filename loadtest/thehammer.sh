@@ -139,6 +139,9 @@ Check_Old_Results ()
 		mv ${pathToAnsible}${holder:43} ${pathToOldResults}
 	done
 
+	[ -d  $pathToResults ] && mv $pathToResults ${pathToOldResults}
+
+
 	echo "####################################################"
 	echo "# OLD RESULTS LOCATED IN ${pathToOldResults} #"
 	echo "####################################################"
