@@ -98,11 +98,11 @@ Check_Config_File ()
 			fi	
 		elif [ "$loadType" == "frametest" ]
 		then
-			if [ "${line:0:2}" == "W" ]
+			if [ ${line:0:2} == "W" ]
 			then
 				w="${line:3}"
 				echo $w
-			elif [ "${line:0:2}" == "T" ]
+			elif [ ${line:0:2} == "T" ]
 			then
 				t="${line:3}"
 				echo $t
@@ -113,43 +113,47 @@ Check_Config_File ()
 
 Check_Old_Results ()
 {
-	touch $temporaryFile
-
-	ls -l ${pathToAnsible} | grep "Total_Results" > $temporaryFile 
-
-	holder=`cat $temporaryFile`
-	pathToOldResults=''
-
-	if [ "${holder:34:1}" == " " ]
+	if [ -f ${pathToAnsible}Total_Results.txt ]
 	then
-		mkdir /DIST/${holder:30:3}0${holder:35:1}_HammerResults
-		pathToOldResults=$resultsDirectory${holder:30:3}0${holder:35:1}_HammerResults/
-	else
-		mkdir $resultsDirectory${holder:30:3}${holder:34:2}_HammerResults
-		pathToOldResults=$resultsDirectory${holder:30:3}${holder:34:2}_HammerResults/
-	fi
 
-	mv ${pathToAnsible}${holder:43} ${pathToOldResults}
-	echo ${pathToOldResults}
-	echo ${pathToAnsible}${holder:43}
+		touch $temporaryFile
 
-	ls -l ${pathToAnsible} | grep "Client_" > $temporaryFile
+		ls -l ${pathToAnsible} | grep "Total_Results" > $temporaryFile 
 
-	for ((i=1; i<=`wc -l < $temporaryFile`; i++))
-	do
-		holder=`sed -n ${i}p $temporaryFile`
+		holder=`cat $temporaryFile`
+		pathToOldResults=''
+
+		if [ "${holder:34:1}" == " " ]
+		then
+			mkdir /DIST/${holder:30:3}0${holder:35:1}_HammerResults
+			pathToOldResults=$resultsDirectory${holder:30:3}0${holder:35:1}_HammerResults/
+		else
+			mkdir $resultsDirectory${holder:30:3}${holder:34:2}_HammerResults
+			pathToOldResults=$resultsDirectory${holder:30:3}${holder:34:2}_HammerResults/
+		fi
+
 		mv ${pathToAnsible}${holder:43} ${pathToOldResults}
+		echo ${pathToOldResults}
+		echo ${pathToAnsible}${holder:43}
+	
+		ls -l ${pathToAnsible} | grep "Client_" > $temporaryFile
+	
+		for ((i=1; i<=`wc -l < $temporaryFile`; i++))
+		do
+			holder=`sed -n ${i}p $temporaryFile`
+			mv ${pathToAnsible}${holder:43} ${pathToOldResults}
 
-	done
+		done
 
 
-	[ -d  $pathToResults ] && mv $pathToResults ${pathToOldResults}
+		[ -d  $pathToResults ] && mv $pathToResults ${pathToOldResults}
 
-	echo $pathToResults
+		echo $pathToResults
 
-	echo "#####################################################"
-	echo "# OLD RESULTS LOCATED IN ${pathToOldResults} #"
-	echo "#####################################################"
+		echo "#####################################################"
+		echo "# OLD RESULTS LOCATED IN ${pathToOldResults} #"
+		echo "#####################################################"
+	fi
 }
 
 ### Configure Path to Storage ###
@@ -400,7 +404,7 @@ Run_Single_Hammer_Again ()
 		ansible-playbook ${pathToAnsible}rerun_single_hammer.yaml --extra-vars "hosts=Clients_All pathToScript=${pathToScripts} pathToStorage=$pathToStorage testType=$loadType pathToResults=${pathToResults} testNum=$i systemStorage=$storageSystem"
 	done
 }
-
+#
 ### Average Results ###
 # Averages the results from the optimal tests 
 Average_Results ()
@@ -715,7 +719,7 @@ Main ()
 	Check_Results
 	Parrallel_Run_Tests
 
-#	Delete_Hosts
+	Delete_Hosts
 }
 
 ### RUN MAIN SUBROUTINE ###
