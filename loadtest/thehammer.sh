@@ -19,7 +19,7 @@ t=' '
 pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
 pathToAnsible="/git_workspace/thehammer/loadtest/"
 runAmount="1 2 3 4 5"
-
+temporaryFile=/tmp/tempFile.txt
 
 ### Flat File Config ###
 # Create a flat config file checker to ensure that the script is running as it should
@@ -109,6 +109,39 @@ Check_Config_File ()
 			fi
 		fi
 	done
+}
+
+Check_Old_Results ()
+{
+	touch $temporaryFile
+
+	ll ${pathToAnsible} | grep "Total_Results" > $temporaryFile 
+
+	holder=`cat $temporaryFile`
+	pathToOldResults=''
+
+	if [ "${holder:34:1}" == " " ]
+	then
+		mkdir /DIST/${holder:30}0${holder:35:1}_HammerResults
+		pathToOldResults=$resultsDirectory${holder:30}0${holder:35:1}_HammerResults/
+	else
+		mkdir $resultsDirectory${holder:30}${holder:34:2}_HammerResults
+		pathToOldResults=$resultsDirectory${holder:30}${holder:34:2}_HammerResults/
+	fi
+
+	mv ${pathToAnsible}${holder:43} ${pathToOldResults}
+
+	ll ${pathToAnsible} | grep "Client_" > $temporaryFile
+
+	for ((i=0; i<=`wc -l < $temporaryFile`; i++))
+	do
+		holder=`sed -n ${i}p $temporaryFile`
+		mv ${pathToAnsible}${holder:43} ${pathToOldResults}
+	done
+
+	echo "####################################################"
+	echo "# OLD RESULTS LOCATED IN ${pathToOldResults} #"
+	echo "####################################################"
 }
 
 ### Configure Path to Storage ###
@@ -663,6 +696,7 @@ Delete_Hosts ()
 Main ()
 {
 	Check_Config_File
+	Check_Old_Results
 	Configure_Path_To_Storage
 	Configure_Hosts
 	Create_Results_Directories
