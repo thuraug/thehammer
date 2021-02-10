@@ -98,11 +98,11 @@ Check_Config_File ()
 			fi	
 		elif [ "$loadType" == "frametest" ]
 		then
-			if [ ${line:0:2} == "W" ]
+			if [ "${line:0:2}" == "W" ]
 			then
 				w="${line:3}"
 				echo $w
-			elif [ ${line:0:2} == "T" ]
+			elif [ "${line:0:2}" == "T" ]
 			then
 				t="${line:3}"
 				echo $t
@@ -668,7 +668,7 @@ Coalate_Results ()
 	figlet "$hostSet" >> $totalResultsFile
 	echo "Clients: ${hostnames:0:-3}" >> $totalResultsFile
 
-	if [ "$loadType" == "frametest"]
+	if [ "$loadType" == "frametest" ]
 	then
 		echo "Average Bandwith: ${numAverage} MB/s" >> $totalResultsFile
 	elif [ "$loadType" == "fio" ]
