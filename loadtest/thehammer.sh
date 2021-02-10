@@ -122,11 +122,11 @@ Check_Old_Results ()
 
 	if [ "${holder:34:1}" == " " ]
 	then
-		mkdir /DIST/${holder:30}0${holder:35:1}_HammerResults
-		pathToOldResults=$resultsDirectory${holder:30}0${holder:35:1}_HammerResults/
+		mkdir /DIST/${holder:30:3}0${holder:35:1}_HammerResults
+		pathToOldResults=$resultsDirectory${holder:30:3}0${holder:35:1}_HammerResults/
 	else
-		mkdir $resultsDirectory${holder:30}${holder:34:2}_HammerResults
-		pathToOldResults=$resultsDirectory${holder:30}${holder:34:2}_HammerResults/
+		mkdir $resultsDirectory${holder:30:3}${holder:34:2}_HammerResults
+		pathToOldResults=$resultsDirectory${holder:30:3}${holder:34:2}_HammerResults/
 	fi
 
 	mv ${pathToAnsible}${holder:43} ${pathToOldResults}
