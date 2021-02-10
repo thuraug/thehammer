@@ -24,7 +24,7 @@ do
 	do
 		for numjobsValue in $numjobsParameters
 		do
-			fio --name=`hostname` --directory=${pathToStorage} --size=100G --direct=0 --rw=write --ioengine=libaio --bs=${bsValue} --iodepth=${iodepthValue} --numjobs=${numjobsValue} --fallocate=none > ${pathToResults}${octet}_bs${bsValue}iod${iodepthValue}nj${numjobsValue}.txt
+			fio --name=`hostname` --directory=${pathToStorage} --size=50G --direct=0 --rw=write --ioengine=libaio --bs=${bsValue} --iodepth=${iodepthValue} --numjobs=${numjobsValue} --fallocate=none > ${pathToResults}${octet}_bs${bsValue}iod${iodepthValue}nj${numjobsValue}.txt
 			killall fio
 			rm -rf $pathToStorage`hostname`*
 		done
