@@ -10,6 +10,12 @@
     pathToScripts: "{{ pathToScripts }}"
     
   tasks:
+
+    - name: Remove Old Data
+      shell: if [ -d "{{ pathToResults }}" ]; then rm -rf "{{ pathToResults }}"; fi
+
+    - name: Remove Old Scripts
+      shell: rm -rf /etc/ansible/scripts/*
       
     - name: Create needed files in /tmp/
       shell: touch /tmp/temp.txt /tmp/holder.txt
