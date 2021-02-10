@@ -115,7 +115,7 @@ Check_Old_Results ()
 {
 	touch $temporaryFile
 
-	ll ${pathToAnsible} | grep "Total_Results" > $temporaryFile 
+	`ls -l ${pathToAnsible} | grep "Total_Results"` > $temporaryFile 
 
 	holder=`cat $temporaryFile`
 	pathToOldResults=''
@@ -131,7 +131,7 @@ Check_Old_Results ()
 
 	mv ${pathToAnsible}${holder:43} ${pathToOldResults}
 
-	ll ${pathToAnsible} | grep "Client_" > $temporaryFile
+	`ls -l ${pathToAnsible} | grep "Client_"` > $temporaryFile
 
 	for ((i=0; i<=`wc -l < $temporaryFile`; i++))
 	do
