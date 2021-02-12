@@ -491,7 +491,7 @@ Check_Results ()
 			elif [ $loadType == "fio" ]
 			then
 				## Fio Specific
-				h=`tail -1 "${fullPathToResults}${i}/${filename}"`
+				h=`tail -1 "${fullPathToResults}${i}/${fileName}"`
 				arrayOfValues+=${h:23:4}" "
 			fi
 		done
@@ -509,7 +509,7 @@ Check_Results ()
 			originalNum=${var:10:-8}
 		elif [ $loadType == "fio" ]
 		then
-			var=`tail -1 ${fullPathToResults}$filename`
+			var=`tail -1 "${fullPathToResults}/$fileName"`
 			originalNum=${var:23:4}
 		fi
 		
