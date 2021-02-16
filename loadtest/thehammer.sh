@@ -742,7 +742,7 @@ Main ()
 	Check_Config_File
 #	Check_Old_Results
 	Configure_Path_To_Storage
-#	Configure_Hosts
+	Configure_Hosts
 #	Create_Results_Directories
 #	Run_Host_Config
 #	Run_Single_Hammer
