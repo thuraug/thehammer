@@ -680,6 +680,8 @@ Coalate_Results ()
 			if [[ "${value:2:1}" != "." || "${value:1:1}" != "." || "${value:3:1}" == "" ]] &&  [ "$units" == "gbs" ]
 			then
 				value=${value:0:1}
+			else
+				value=${value::-2}
 			fi
 
 			totalBandwith=$( echo $totalBandwith + $value  | bc )
