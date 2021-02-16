@@ -682,7 +682,7 @@ Coalate_Results ()
 				value=${value:0:1}.${value:1:2}
 			fi
 
-			totalBandwith=$( echo "$totalBandwith + $value " | bc )
+			totalBandwith=$( echo $totalBandwith + $value  | bc )
 		done
 
 		printf "\n\n" >> $resultsFile
