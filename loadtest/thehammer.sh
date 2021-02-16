@@ -601,7 +601,7 @@ Coalate_Results ()
 	for test in `ls $pathToTestResults`
 	do
 		pathToTestNum="${pathToTestResults}${test}/"
-		totalBandwith=''
+		totalBandwith=0
 		bandwithArray=''
 		hostnames=''
 		ipAddresses='' #put the ip addresses into here (192.168.10.35 && 192.168.11.207)
@@ -682,7 +682,7 @@ Coalate_Results ()
 				value=${value:0:1}.${value:1:2}
 			fi
 
-			totalBandwith=$(( echo $totalBandwith + $value  | bc ))
+			totalBandwith=$(( echo "$totalBandwith + $value"  | bc ))
 		done
 
 		printf "\n\n" >> $resultsFile
