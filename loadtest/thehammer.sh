@@ -677,7 +677,7 @@ Coalate_Results ()
 
 			# CHECK WHAT THE OVERALL UNITS WANTED??????
 
-			if [[ "${value:2:1}" != "." || "${value:1:1}" != "." || "${value:3:1}" == "" ]] &&  [ "$units" == "gbs" ]
+			if [[ "${value:2:1}" != "." ]] &&  [ "$units" == "gbs" ]
 			then
 				value=${value:0:1}
 			fi
