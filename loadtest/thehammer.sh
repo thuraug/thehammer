@@ -8,6 +8,7 @@ whoami=`whoami`
 storageSystem=''
 tier=''
 loadType=''
+units=''
 resultsDirectory=''
 pathToResults=''
 pathToStorage=''
@@ -28,6 +29,9 @@ Check_Config_File ()
 	for ((i=1; i<=`wc -l < Config_File.txt`; i++))
 	do
 		line=`sed -n ${i}p Config_File.txt`
+
+		
+
 	
 		if [ "${line:0:8}" == "LOADTYPE" ]
 		then
@@ -79,6 +83,18 @@ Check_Config_File ()
 			pathToResults=${resultsDirectory}LOAD_TEST_RESULTS/
 		
 			echo $pathToResults
+		elif [ "${line:0:5}" == "UNITS" ]
+		then
+			if [[ `echo "${line:6}" | tr '[:upper:]' '[:lower:]'` == "gbs" || `echo "${line:6}" | tr '[:upper:]' '[:lower:]'` == "mbs" ]]
+			then
+				units=`echo "${line:6}" | tr '[:upper:]' '[:lower:]'`
+				echo $units
+			else
+				figlet 'ERROR'
+				echo 'UNITS does not have a correct option. Please correct with either "gbs" or "mbs"'
+				echo "Error is on line ${i} here: ${line}"
+				exit
+			fi
 		fi
 
 		if [ "$loadType" == "fio" ]
@@ -454,6 +470,7 @@ Add_To_Results_File ()
 	printf "\n\n" >> ${resultsFile}
 	echo "The optimal setting for ${ipAddress} are: ${fileName:4:-4}" >> ${resultsFile}
 	echo "The Averaged bandwith is: "$numAverage" MB/s" >> ${resultsFile}
+	
 }
 
 ### Check Optimal Results ###
@@ -657,6 +674,14 @@ Coalate_Results ()
 	
 		for value in ${bandwithArray}
 		do
+
+			# CHECK WHAT THE OVERALL UNITS WANTED??????
+
+			if [[ "${value:2:1}" != "." || "${value:1:1}" != "." || "${value:3:1}" == "" ]] &&  [ "$units" == "gbs" ]
+			then
+				value=${value:0:1}.${value:1:2}
+			fi
+
 			totalBandwith=$[ $totalBandwith + $value ]
 		done
 
