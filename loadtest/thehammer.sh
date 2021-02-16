@@ -148,6 +148,11 @@ Check_Old_Results ()
 
 		[ -d  $pathToResults ] && mv $pathToResults ${pathToOldResults}
 
+		for script in `ls ${pathToScripts} | grep _`
+		do
+			mv ${pathToScripts}${script} ${pathToOldResults}
+		done
+
 		echo $pathToResults
 
 		echo "#####################################################"
@@ -426,13 +431,14 @@ Average_Results ()
 Percent_Difference ()
 {
 	j=1
-	if [[ "$numAverage" -lt "$originalNum" ]]
+	check=$(echo "$numAverage < $originalNum" | bc -q)
+	if [ $check == 1 ]
 	then
 		j=-1
 	fi
 		
-	var1=$[ $[ $numAverage - $originalNum ] ]
-	var2=$[ $[ $numAverage + $originalNum ] / 2 ]
+	var1=$( echo "$numAverage - $originalNum" | bc )
+	var2=$( echo "$numAverage + $originalNum  / 2"  | bc )
 			
 	percentDiff=`echo "scale=2 ; ($var1/$var2*100*$j)" | bc`
 	echo "Percent Difference: "$percentDiff		
@@ -538,9 +544,10 @@ Parrallel_Run_Tests ()
 {
 	hostsArray=''
 
-	for line in `cat /etc/ansible/hosts | grep Client_`
+	for line in `cat -A /etc/ansible/hosts | grep Client_`
 	do
-		hostsArray+=${line:1:-1}" "
+		echo $line
+		hostsArray+="${line:1:-2} "
 	done
 
 	for hostSet in $hostsArray
@@ -708,14 +715,14 @@ Delete_Hosts ()
 Main ()
 {
 	Check_Config_File
-	Check_Old_Results
+#	Check_Old_Results
 	Configure_Path_To_Storage
-	Configure_Hosts
-	Create_Results_Directories
-	Run_Host_Config
-	Run_Single_Hammer
-	Compare_Single_Results
-	Run_Single_Hammer_Again	
+#	Configure_Hosts
+#	Create_Results_Directories
+#	Run_Host_Config
+#	Run_Single_Hammer
+#	Compare_Single_Results
+#	Run_Single_Hammer_Again	
 	Check_Results
 	Parrallel_Run_Tests
 
