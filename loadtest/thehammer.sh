@@ -385,7 +385,7 @@ Compare_Single_Results ()
 			
 		for i in ${arrayOfValues}
 		do
-			if [[ "${i}" -gt "${highNum}" ]]
+			if (( $( echo "${i}" > "${highNum}" | bc -l ) ))
 			then
 				highNum=$i
 			fi
@@ -740,14 +740,14 @@ Delete_Hosts ()
 Main ()
 {
 	Check_Config_File
-#	Check_Old_Results
+	Check_Old_Results
 	Configure_Path_To_Storage
 	Configure_Hosts
-#	Create_Results_Directories
-#	Run_Host_Config
-#	Run_Single_Hammer
-#	Compare_Single_Results
-#	Run_Single_Hammer_Again	
+	Create_Results_Directories
+	Run_Host_Config
+	Run_Single_Hammer
+	Compare_Single_Results
+	Run_Single_Hammer_Again	
 	Check_Results
 	Parrallel_Run_Tests
 
