@@ -19,6 +19,7 @@ w=' '
 t=' '
 pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
 pathToAnsible="/git_workspace/thehammer/loadtest/"
+totalResultsFile="${pathToAnsible}Total_Results.txt"
 runAmount="1 2 3 4 5"
 temporaryFile=/tmp/tempFile.txt
 
@@ -589,7 +590,6 @@ Coalate_Results ()
 	numAverage=''
 	arrayOfValues=''
 	resultsFile="${pathToAnsible}${hostSet}_Results.txt"
-	totalResultsFile="${pathToAnsible}Total_Results.txt"
 	bClientHosts=0
 	numOfClients="${hostSet:8:1}"
 
@@ -757,33 +757,8 @@ Main ()
 ### RUN MAIN SUBROUTINE ###
 Main
 
-
-
-
-###################
-# START OF PART 2 #
-###################
-
-
-# As long as the optimal tests succeeded then continue on to here
-# step one is to create an array full of the the different ansible hosts that need to be run
-	# this will also denote the file path that we will need to go into
-	
-
-
-
-
-
-
-# Create the continuous re-run ansible test each one running at the exact same time
-#	How many times to run and average total results --> keep track of all this information in overall text file
-# 	Put them in a folder named the same as the host set
-# 	Store results in file oct_parameters_test#
-
-# Coalate the results into one test file
-#	name the text file with oct.oct.paramters
-# 	inside the text file add up the bandwith results along with marking all the results individually
-#	mark the parameters as well
+# Just...you know safe measures to see shit
+cat $totalResultsFile
 
 
 
