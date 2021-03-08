@@ -575,7 +575,17 @@ Parrallel_Run_Tests ()
 
 	for hostSet in $hostsArray
 	do
-		pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
+		
+		lengthOfHostSet=`echo $hostSet | wc -c`
+
+		if (( $( echo "$lengthOfHostSet > 14" | bc -l ) ))
+		then 
+			pathToTestResults="${pathToResults}${hostSet:0:-6}/${hostSet}/"
+		elif (( $( echo "$lengthOfHostSet <= 14" | bc -l ) ))
+		then
+			pathToTestResults="${pathToResults}${hostSet:0:-5}/${hostSet}/"
+		fi
+
 		echo $pathToTestResults
 		Run_Parrallel_Hammer
 		Coalate_Results
