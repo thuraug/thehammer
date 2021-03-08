@@ -152,13 +152,18 @@ Check_Old_Results ()
 		mv ${pathToAnsible}${holder:43} ${pathToOldResults}
 		echo ${pathToOldResults}
 		echo ${pathToAnsible}${holder:43}
+
+		oldScipts=${pathToOldResults}Optimal_Scipts/
+		indResults=${pathToOldResults}Individual_Results/
+
+		mkdir $oldScipts && mkdir $indResults
 	
 		ls -l ${pathToAnsible} | grep "Client_" > $temporaryFile
 	
 		for ((i=1; i<=`wc -l < $temporaryFile`; i++))
 		do
 			holder=`sed -n ${i}p $temporaryFile`
-			mv ${pathToAnsible}${holder:43} ${pathToOldResults}
+			mv ${pathToAnsible}${holder:43} ${indResults}
 
 		done
 
@@ -167,7 +172,7 @@ Check_Old_Results ()
 
 		for script in `ls ${pathToScripts} | grep _`
 		do
-			mv ${pathToScripts}${script} ${pathToOldResults}
+			mv ${pathToScripts}${script} ${oldScipts}
 		done
 
 		echo $pathToResults
