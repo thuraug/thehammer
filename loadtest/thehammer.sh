@@ -154,7 +154,7 @@ Check_Old_Results ()
 		echo ${pathToAnsible}${holder:43}
 
 		oldScipts=${pathToOldResults}Optimal_Scipts/
-		indResults=${pathToOldResults}Individual_Results/
+		indResults=${pathToOldResults}Individual_Test_Results/
 
 		mkdir $oldScipts && mkdir $indResults
 	
