@@ -391,7 +391,7 @@ Compare_Single_Results ()
 			
 		for i in ${arrayOfValues}
 		do
-			if (( $( "echo ${i} > ${highNum}" | bc -l ) ))
+			if (( $( echo "${i} > ${highNum}" | bc -l ) ))
 			then
 				highNum=$i
 			fi
