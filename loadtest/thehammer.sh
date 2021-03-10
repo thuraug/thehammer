@@ -31,9 +31,6 @@ Check_Config_File ()
 	do
 		line=`sed -n ${i}p Config_File.txt`
 
-		
-
-	
 		if [ "${line:0:8}" == "LOADTYPE" ]
 		then
 			if [[ `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "frametest" || `echo "${line:9}" | tr '[:upper:]' '[:lower:]'` == "fio" ]]
@@ -555,13 +552,6 @@ Check_Results ()
 
 	cat $resultsFile
 }
-
-
-###################
-# TESTING SECTION #
-###################
-
-
 
 Parrallel_Run_Tests ()
 {
