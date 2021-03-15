@@ -189,7 +189,7 @@ Configure_Path_To_Storage ()
 		pathToStorage="/mmfs1/${tier}/${loadType}/"
 	elif [[ $storageSystem == "nexsan" ]]
 	then
-		pathToStorage="/mnt/nexsan/${loadtype}/"
+		pathToStorage="/mnt/nexsan/${loadType}/"
 	else
 		pathToStorage="/vast"
 	fi
