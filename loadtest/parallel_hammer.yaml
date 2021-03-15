@@ -52,7 +52,7 @@
     - name: get full gpfs path
       shell: echo "{{ pathToStorage }}"
       register: fullGPFSPath
-      when: systemStorage == "gpfs"
+      when: systemStorage != "vast"
 
     - name: IP Variable
       shell: echo `ip route get 1.2.3.4 | awk '{print $7}'`
@@ -86,11 +86,11 @@
 
     - name: Execute Frametest.sh
       shell: "{{ pathToFrametest.stdout }} {{ fullGPFSPath.stdout }} {{ fullPathToResults.stdout }} {{ pathToScripts }}"
-      when: testType == "frametest" and systemStorage == "gpfs"
+      when: testType == "frametest" and systemStorage != "vast"
 
     - name: Execute fio
       shell: "{{ pathToFio.stdout }} {{ fullGPFSPath.stdout }} {{ fullPathToResults.stdout }}/ {{ pathToScripts }}"
-      when: testType == "fio" and systemStorage == "gpfs"
+      when: testType == "fio" and systemStorage != "vast"
     
     - name: Fetch Results Files
       shell: rsync -av "{{ fullPathToResults.stdout }}" "{{ localhost.stdout }}{{ pathToLocalResults }}"

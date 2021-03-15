@@ -37,7 +37,7 @@
     - name: get full gpfs path
       shell: echo "{{ pathToStorage }}{{ hostname.stdout }}/"
       register: fullGPFSPath
-      when: systemStorage == "gpfs"
+      when: systemStorage != "vast"
 
     - name: ensure everything is the proper permissions
       shell: chmod 755 /etc/ansible/scripts/*
@@ -52,7 +52,7 @@
 
     - name: Execute Frametest.sh gpfs
       shell: /etc/ansible/scripts/frametest.sh "{{ fullGPFSPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ w }}" "{{ t }}"
-      when: testType == "frametest" and systemStorage == "gpfs"
+      when: testType == "frametest" and systemStorage != "vast"
 
     - name: Execute fio vast
       shell: /etc/ansible/scripts/fio.sh "{{ fullVastPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
@@ -60,7 +60,7 @@
 
     - name: Execute fio gpfs
       shell: /etc/ansible/scripts/fio.sh "{{ fullGPFSPath.stdout }}" "{{ pathToResults }}" "{{ pathToScripts }}" "{{ bs }}" "{{ iod }}" "{{ nj }}"
-      when: testType == "fio" and systemStorage == "gpfs"
+      when: testType == "fio" and systemStorage != "vast"
  
     - name: Fetch Results Files
       shell: rsync -av "{{ pathToResults }}" "{{ localhost.stdout }}{{ pathToResults }}Client_1/{{ ipAddress.stdout }}/"

@@ -41,7 +41,7 @@
       stat:
         path: "{{ pathToStorage }}"
       register: storageIsMounted
-      when: storageSystem == "gpfs"
+      when: storageSystem != "vast"
 
     - name: Generate Hostname Folder
       shell: echo `hostname`
@@ -57,7 +57,7 @@
       stat:
         path: "{{ pathToStorage }}{{ hostname.stdout }}"
       register: hostnameGPFSExists
-      when: storageSystem == "gpfs"
+      when: storageSystem != "vast"
 
     - name: Create Hostname folder on vast storage
       shell: mkdir "{{ vastPathToStorage.stdout }}{{ hostname.stdout }}" 
@@ -65,7 +65,7 @@
 
     - name: Create hostname folder on storage
       shell: mkdir "{{ pathToStorage }}{{hostname.stdout }}"
-      when: storageSystem == "gpfs" and storageIsMounted.stat.exists and hostnameGPFSExists.stat.exists == False
+      when: storageSystem != "vast" and storageIsMounted.stat.exists and hostnameGPFSExists.stat.exists == False
     
     - name: Check for /DIST/LOAD_TEST_RESULTS
       stat:

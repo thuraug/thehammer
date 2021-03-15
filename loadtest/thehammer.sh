@@ -45,7 +45,7 @@ Check_Config_File ()
 			fi
 		elif [ "${line:0:11}" == "STORAGETYPE" ]
 		then
-			if [[ `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "gpfs" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "vast" ]]
+			if [[ `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "gpfs" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "vast"  || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "nexsan" ]]
 			then
 				storageSystem=`echo "${line:12}" | tr '[:upper:]' '[:lower:]'`
 				echo $storageSystem
@@ -187,6 +187,9 @@ Configure_Path_To_Storage ()
 	if [[ $storageSystem == "gpfs" ]]
 	then
 		pathToStorage="/mmfs1/${tier}/${loadType}/"
+	elif [[ $storageSystem == "nexsan" ]]
+	then
+		pathToStorage="/mnt/nexsan/${loadtype}/"
 	else
 		pathToStorage="/vast"
 	fi
@@ -491,6 +494,8 @@ Check_Results ()
 
 	printf "\n" >> ${resultsFile}
 	figlet "RESULTS" >> ${resultsFile}
+	printf "\n" >> ${resultsFile}
+	figlet "$storageSystem" >> ${resultsFile}
 	
 	for client in `ls ${pathToResults}Client_1`
 	do
