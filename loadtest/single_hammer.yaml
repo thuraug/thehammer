@@ -28,7 +28,6 @@
       shell: echo `hostname`
       register: hostname
 
-    
     - name: get full vastpath 
       shell: ls / | grep vast1 > /tmp/temp.txt && sed -n 1p /tmp/temp.txt > /tmp/holder.txt; printf "/" && printf `cat /tmp/holder.txt` && printf "/frametest/" && printf `hostname` && printf "/"
       register: fullVastPath
