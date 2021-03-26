@@ -45,7 +45,7 @@ Check_Config_File ()
 			fi
 		elif [ "${line:0:11}" == "STORAGETYPE" ]
 		then
-			if [[ `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "gpfs" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "vast"  || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "nexsan" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "truenas"]]
+			if [[ `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "gpfs" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "vast"  || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "nexsan" || `echo "${line:12}" | tr '[:upper:]' '[:lower:]'` == "truenas" ]]
 			then
 				storageSystem=`echo "${line:12}" | tr '[:upper:]' '[:lower:]'`
 				echo $storageSystem
