@@ -1,0 +1,142 @@
+ ____  _____ ____  _   _ _   _____ ____  
+|  _ \| ____/ ___|| | | | | |_   _/ ___| 
+| |_) |  _| \___ \| | | | |   | | \___ \ 
+|  _ <| |___ ___) | |_| | |___| |  ___) |
+|_| \_\_____|____/ \___/|_____|_| |____/ 
+                                         
+
+
+ _____         _     _   _                 _                 _ 
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  / |
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__| | |
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |    | |
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |_|
+                                                               
+
+Hostname: zod
+Individual Bandwith: 573 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 585 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 1239 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for zod && pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 2397
+
+
+ _____         _     _   _                 _                 ____  
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  |___ \ 
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__|   __) |
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |     / __/ 
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |_____|
+                                                                   
+
+Hostname: zod
+Individual Bandwith: 375 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 403 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 384 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for zod && pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 1162
+
+
+ _____         _     _   _                 _                 _____ 
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  |___ / 
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__|   |_ \ 
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |     ___) |
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |____/ 
+                                                                   
+
+Hostname: zod
+Individual Bandwith: 373 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 401 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 378 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for zod && pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 1152
+
+
+ _____         _     _   _                 _                 _  _   
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  | || |  
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__| | || |_ 
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |    |__   _|
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|       |_|  
+                                                                    
+
+Hostname: zod
+Individual Bandwith: 399 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 449 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 405 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for zod && pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 1253
+
+
+ _____         _     _   _                 _                 ____  
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  | ___| 
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__| |___ \ 
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |     ___) |
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |____/ 
+                                                                   
+
+Hostname: zod
+Individual Bandwith: 355 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 378 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 363 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for zod && pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 1096
+
+
+
+    _                                 
+   / \__   _____ _ __ __ _  __ _  ___ 
+  / _ \ \ / / _ \ '__/ _` |/ _` |/ _ \
+ / ___ \ V /  __/ | | (_| | (_| |  __/
+/_/   \_\_/ \___|_|  \__,_|\__, |\___|
+                           |___/      
+ ____                  _          _ _   _     
+| __ )  __ _ _ __   __| |_      _(_) |_| |__  
+|  _ \ / _` | '_ \ / _` \ \ /\ / / | __| '_ \ 
+| |_) | (_| | | | | (_| |\ V  V /| | |_| | | |
+|____/ \__,_|_| |_|\__,_| \_/\_/ |_|\__|_| |_|
+                                              
+Averaged Bandwith: 1412

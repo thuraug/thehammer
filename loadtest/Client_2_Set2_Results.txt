@@ -1,0 +1,122 @@
+ ____  _____ ____  _   _ _   _____ ____  
+|  _ \| ____/ ___|| | | | | |_   _/ ___| 
+| |_) |  _| \___ \| | | | |   | | \___ \ 
+|  _ <| |___ ___) | |_| | |___| |  ___) |
+|_| \_\_____|____/ \___/|_____|_| |____/ 
+                                         
+
+
+ _____         _     _   _                 _                 _ 
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  / |
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__| | |
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |    | |
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |_|
+                                                               
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 1184 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 2105 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 3289
+
+
+ _____         _     _   _                 _                 ____  
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  |___ \ 
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__|   __) |
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |     / __/ 
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |_____|
+                                                                   
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 1098 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 2048 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 3146
+
+
+ _____         _     _   _                 _                 _____ 
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  |___ / 
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__|   |_ \ 
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |     ___) |
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |____/ 
+                                                                   
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 619 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 585 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 1204
+
+
+ _____         _     _   _                 _                 _  _   
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  | || |  
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__| | || |_ 
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |    |__   _|
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|       |_|  
+                                                                    
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 830 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 1247 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 2077
+
+
+ _____         _     _   _                 _                 ____  
+|_   _|__  ___| |_  | \ | |_   _ _ __ ___ | |__   ___ _ __  | ___| 
+  | |/ _ \/ __| __| |  \| | | | | '_ ` _ \| '_ \ / _ \ '__| |___ \ 
+  | |  __/\__ \ |_  | |\  | |_| | | | | | | |_) |  __/ |     ___) |
+  |_|\___||___/\__| |_| \_|\__,_|_| |_| |_|_.__/ \___|_|    |____/ 
+                                                                   
+
+Hostname: pixstor5-resolve
+Individual Bandwith: 806 MB/s
+Parameters:  -w90000 -n1800 -t16 
+
+Hostname: pixstor6-resolve
+Individual Bandwith: 1180 MB/s
+Parameters:  -w90000 -n1800 -t12 
+
+
+Combined Bandwith for pixstor5-resolve && pixstor6-resolve 
+Combined Bandwith: 1986
+
+
+
+    _                                 
+   / \__   _____ _ __ __ _  __ _  ___ 
+  / _ \ \ / / _ \ '__/ _` |/ _` |/ _ \
+ / ___ \ V /  __/ | | (_| | (_| |  __/
+/_/   \_\_/ \___|_|  \__,_|\__, |\___|
+                           |___/      
+ ____                  _          _ _   _     
+| __ )  __ _ _ __   __| |_      _(_) |_| |__  
+|  _ \ / _` | '_ \ / _` \ \ /\ / / | __| '_ \ 
+| |_) | (_| | | | | (_| |\ V  V /| | |_| | | |
+|____/ \__,_|_| |_|\__,_| \_/\_/ |_|\__|_| |_|
+                                              
+Averaged Bandwith: 2340
