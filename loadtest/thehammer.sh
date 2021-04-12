@@ -784,7 +784,7 @@ then
 	read -p 'Are these the clients you want to run load with? (y/n)' Client_Check
 	echo $Client_Check
 
-	if [[ "${Client_Check}" == "yes" || "y" ]]
+	if [[ "${Client_Check}" == "y" ]]
 	then
 		Main
 	else
