@@ -775,7 +775,7 @@ read -p 'Are these settings correct? (y/n)' check_config
 
 echo ${check_config}
 
-if [[ "${check_config}" == "yes" || "y" ]]
+if [[ "${check_config}" == "y" ]]
 then
 	printf "\n\n"
 	cat ./Clients_Config
