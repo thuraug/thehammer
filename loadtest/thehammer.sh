@@ -784,12 +784,10 @@ then
 	then
 		Main
 	else
-		break
-		exit
+		exit 0 
 	fi
 else
-	break
-	exit
+	exit 0
 fi
 
 # Just...you know safe measures to see shit
