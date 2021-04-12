@@ -784,9 +784,11 @@ then
 	then
 		Main
 	else
+		break
 		exit
 	fi
 else
+	break
 	exit
 fi
 
