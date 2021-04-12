@@ -772,6 +772,9 @@ Main ()
 cat ./Config_File.txt
 
 read -p 'Are these settings correct? (y/n)' check_config
+
+echo check_config
+
 if [[ "$check_config" == "yes" || "y" ]]
 then
 	printf "\n\n"
@@ -779,6 +782,7 @@ then
 	printf "\n"
 
 	read -p 'Are these the clients you want to run load with? (y/n)' Client_Check
+	echo $Client_Check
 
 	if [[ "$Client_Check" == "yes" || "y" ]]
 	then
