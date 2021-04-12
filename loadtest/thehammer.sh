@@ -772,7 +772,7 @@ Main ()
 cat ./Config_File
 
 read -p 'Are these settings correct? (y/n)' check_config
-if [ "$check_config" == "yes" | "y" ]
+if [ "$check_config" == "yes" || "y" ]
 then
 	Main
 else
