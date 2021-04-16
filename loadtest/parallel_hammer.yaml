@@ -94,4 +94,3 @@
     
     - name: Fetch Results Files
       shell: rsync -av "{{ fullPathToResults.stdout }}" "{{ localhost.stdout }}{{ pathToLocalResults }}"
-    
