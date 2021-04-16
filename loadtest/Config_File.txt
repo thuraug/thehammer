@@ -5,6 +5,11 @@ STORAGETYPE=vast
 UNITS=mbs
 RESULTSDIRECTORY=/DIST/
 PARAMETER:
+<<<<<<< HEAD
 	BS=1m 4m 8m
 	IOD=4 8 12 16
 	NJ=16 32
+=======
+	W=2k 4k 90000 125000
+	T=4 8 12 16
+>>>>>>> aae8c0827af080fd6f5f4cfa7a838edd85bda04f

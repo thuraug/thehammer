@@ -83,4 +83,3 @@
     
     - name: Fetch Results Files
       shell: rsync -av "{{ fullPathToResults.stdout }}"  "{{ localhost.stdout }}{{ pathToResults }}Client_1/{{ipAddress.stdout}}"
-    
