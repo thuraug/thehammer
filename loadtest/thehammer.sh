@@ -769,30 +769,30 @@ Main ()
 
 ### RUN MAIN SUBROUTINE ###
 
-cat ./Config_File.txt
+cat "${pathToAnsible}/Config_File.txt"
 
-read -p 'Are these settings correct? (y/n)' check_config
+read -p 'Are these settings correct? (y/n)' checkConfig
 
-if [[ "${check_config}" == "y" ]]
+if [[ "${checkConfig}" == "y" ]]
 then
 	printf "\n\n"
-	cat ./Clients_Config
+	cat "${pathToAnsible}/Clients_Config"
 	printf "\n"
 
-	read -p 'Are these the clients you want to run load with? (y/n)' Client_Check
+	read -p 'Are these the clients you want to run load with? (y/n)' ClientCheck
 
-	if [[ "${Client_Check}" == "y" ]]
+	if [[ "${ClientCheck}" == "y" ]]
 	then
 		Main
 	else
 		printf "\n"
 		echo "Update this in Clients_Config"
-		exit 0 
+		exit
 	fi
 else
 	printf "\n"
 	echo "Update this in Config_File"
-	exit 0
+	exit
 fi
 
 # Just...you know safe measures to see shit
