@@ -11,7 +11,7 @@ else
 	read -p "Do you want to install ansible? (y/n) " installAnsible
 fi
 
-if [[ -x "$(command -v ansible)" && "${installAnsible}" == "y" ]]
+if [[ ! -x "$(command -v ansible)" && "${installAnsible}" == "y" ]]
 then
 	yum install Ansible
 else
