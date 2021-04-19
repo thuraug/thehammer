@@ -1,7 +1,6 @@
 #!/bin/bash
 
 currentDirectory=`pwd`/
-installAnsible="y"
 
 # Check if ansible is installed
 if [ -x "$(command -v ansible)" ]
