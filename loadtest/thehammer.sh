@@ -17,8 +17,8 @@ iod=' '
 nj=' '
 w=' '
 t=' '
-pathToScripts="/git_workspace/thehammer/loadtest/scripts/"
-pathToAnsible="/git_workspace/thehammer/loadtest/"
+pathToScripts="/etc/thehammer/scripts/"
+pathToAnsible="/etc/thehammer/"
 totalResultsFile="${pathToAnsible}Total_Results.txt"
 runAmount="1 2 3 4 5"
 temporaryFile=/tmp/tempFile.txt
@@ -27,9 +27,9 @@ temporaryFile=/tmp/tempFile.txt
 # Create a flat config file checker to ensure that the script is running as it should
 Check_Config_File ()
 {
-	for ((i=1; i<=`wc -l < Config_File.txt`; i++))
+	for ((i=1; i<=`wc -l < ${pathToAnsible}Config_File.txt`; i++))
 	do
-		line=`sed -n ${i}p Config_File.txt`
+		line=`sed -n ${i}p ${pathToAnsible}Config_File.txt`
 
 		if [ "${line:0:8}" == "LOADTYPE" ]
 		then
