@@ -40,7 +40,7 @@ ln -s /etc/thehammer/thehammer.sh /usr/local/bin/thehammer
 
 chmod 755 /etc/thehammer/Create_Config_File.sh
 chmod 755 /etc/thehammer/host_sorting.sh
-chmod 755 ${currentDirectory}scripts/frametest
+chmod 755 /etc/thehammer/scripts/frametest
 
 printf "\n\n"
 cat /etc/thehammer/README.txt
