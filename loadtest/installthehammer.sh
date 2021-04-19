@@ -15,6 +15,7 @@ if [[ ! -x "$(command -v ansible)" && "${installAnsible}" == "y" ]]
 then
 	yum install Ansible
 elif [[ ! -x "$(command -v ansible)" && "${installAnsible}" == "n" ]]
+then
 	printf "\n"
 	echo "Ansible must be installed to run The Hammer. Please install it before continuing"
 	echo "Run:"
