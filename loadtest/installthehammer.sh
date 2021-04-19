@@ -44,3 +44,5 @@ chmod 755 /etc/thehammer/scripts/frametest
 
 printf "\n\n"
 cat /etc/thehammer/README.txt
+
+printf "\n"
